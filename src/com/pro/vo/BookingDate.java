@@ -2,7 +2,15 @@ package com.pro.vo;
 
 import java.time.LocalDate;
 /**
- * VO class representing a booking date for availability checks.
+ * <pre>
+ * {@code
+ * BookingDate 클래스는 예약날짜의 정보를 가지고 있는 클래스이다.  
+ * }
+ * </pre>
+ * @author LEE TAE RAN
+ * @version project version 1.0.2
+ * @since JDK17
+ * 
  */
 public class BookingDate {
 	/**

@@ -3,7 +3,15 @@ package com.pro.vo;
 import java.util.HashMap;
 import java.util.Map;
 /**
- * VO class representing a GuestHouse with basic information.
+ * <pre>
+ * {@code
+ * GuestHouse 클래스는 게스트하우스의 정보를 가지고 있는 클래스이다.  
+ * }
+ * </pre>
+ * @author LEE TAE RAN
+ * @version project version 1.0.2
+ * @since JDK17
+ * 
  */
 public class GuestHouse {
 	/**
@@ -27,7 +35,7 @@ public class GuestHouse {
      */
 	private double price;
 	 /**
-     * Constructs a new GuestHouse VO.
+     * 명시적 생성자 GuestHouse
      *
      * @param name       게스트하우스 이름 (고유 식별자)
      * @param rooms      방 목록(방 번호 → 수용 인원)
