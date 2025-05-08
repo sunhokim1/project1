@@ -3,6 +3,8 @@ package com.pro.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pro.exception.DuplicateException;
+import com.pro.exception.RecordNotFoundException;
 import com.pro.service.HeadOfficeService;
 import com.pro.vo.Booking;
 import com.pro.vo.GuestHouse;
@@ -59,7 +61,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * GuestHouse클래스를 guestHouses ArrayList에 추가한다.
 	 */
 	@Override
-	public void addGuestHouse(GuestHouse guestHouse) {
+	public void addGuestHouse(GuestHouse guestHouse) throws DuplicateException{//Duplicate
 		for (GuestHouse g : guestHouses) {
 			if (g.getName().equals(guestHouse.getName())) {
 				System.out.println("이미 등록된 게스트하우스입니다.");
@@ -73,7 +75,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * User클래스를 users ArrayList에 추가한다.
 	 */
 	@Override
-	public void addUser(User user) {
+	public void addUser(User user) throws DuplicateException{//Duplicate
 		for (User u : users) {
 			if (u.getId().equals(user.getId())) {
 				System.out.println("이미 등록된 ID입니다.");
@@ -87,7 +89,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * name을 가진 GuestHouse 클래스를 guestHouses ArrayList에서 삭제한다.
 	 */
 	@Override
-	public void deleteGuestHouse(String name) {
+	public void deleteGuestHouse(String name) throws RecordNotFoundException{//RecordNotFound
 		boolean find = false;
 		int idx = 0;
 		if (guestHouses.isEmpty()) {
@@ -112,7 +114,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * ID가 id인 User 클래스를 users에서 삭제한다.
 	 */
 	@Override
-	public void deleteUser(String id) {
+	public void deleteUser(String id) throws RecordNotFoundException{//RecordNotFound
 		boolean find = false;
 		int idx = 0;
 		if (users.isEmpty()) {
@@ -199,7 +201,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * 들어온 User가 상속된 Guest와 Employee라면 형변환 하여 수정한다.
 	 */
 	@Override
-	public void updateUser(User user) {
+	public void updateUser(User user) throws RecordNotFoundException{//RecordNotFound
 		if (users.isEmpty()) {
 			System.out.println("등록된 유저가 없습니다.");
 			return;
@@ -224,7 +226,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * 같은 id가 있다면 새로 입력된 guesthouse 정보로 수정한다. 
 	 */
 	@Override
-	public void updateGuestHouse(GuestHouse guesthouse) {
+	public void updateGuestHouse(GuestHouse guesthouse) throws RecordNotFoundException{//RecordNotFound
 		if (users.isEmpty()) {
 			System.out.println("등록된 유저가 없습니다.");
 			return;
@@ -282,43 +284,43 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 
 	@Override
-	public double getSalesForMonth(int year, int month) {
+	public double getSalesForMonth(int year, int month) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForQuarter(int year, int quarter) {
+	public double getSalesForQuarter(int year, int quarter) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForYear(int year) {
+	public double getSalesForYear(int year) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForMonth(int year, int month, String guestHouseName) {
+	public double getSalesForMonth(int year, int month, String guestHouseName) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForQuarter(int year, int quarter, String guestHouseName) {
+	public double getSalesForQuarter(int year, int quarter, String guestHouseName) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForYear(int year, String guestHouseName) {
+	public double getSalesForYear(int year, String guestHouseName) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int getPeakSeason(int year) {
+	public int getPeakSeason(int year) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}

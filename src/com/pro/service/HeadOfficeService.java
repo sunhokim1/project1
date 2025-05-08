@@ -2,6 +2,8 @@ package com.pro.service;
 
 import java.util.List;
 import com.pro.vo.User;
+import com.pro.exception.DuplicateException;
+import com.pro.exception.RecordNotFoundException;
 import com.pro.vo.Booking;
 import com.pro.vo.GuestHouse;
 /**
@@ -18,25 +20,25 @@ public interface  HeadOfficeService extends BookingService,RevenueService{
      *
      * @param guestHouse 추가할 GuestHouse Entity
      */
-	void addGuestHouse(GuestHouse guestHouse);
+	void addGuestHouse(GuestHouse guestHouse)throws DuplicateException;
 	/**
      * 시스템에 새로운 사용자를 추가한다.
      *
      * @param user 추가할 User Entity
      */
-	void addUser(User user);
+	void addUser(User user)throws DuplicateException;
 	/**
      * 지정된 이름의 게스트하우스를 시스템에서 삭제한다.
      *
      * @param name 삭제할 게스트하우스의 고유 이름
      */
-	void deleteGuestHouse(String name);
+	void deleteGuestHouse(String name)throws RecordNotFoundException;
 	 /**
      * 지정된 ID를 가진 사용자를 시스템에서 삭제한다.
      *
      * @param id 삭제할 사용자의 고유 id
      */
-	void deleteUser(String id);
+	void deleteUser(String id)throws RecordNotFoundException;
 	/**
      * 지정된 ID를 가진 사용자를 조회한다.
      *
@@ -69,12 +71,12 @@ public interface  HeadOfficeService extends BookingService,RevenueService{
      *
      * @param user 업데이트할 User Entity
      */
-	void updateUser(User user);
+	void updateUser(User user) throws RecordNotFoundException;
 	/**
      * 지정된 GuestHouse 엔티티 정보를 기반으로 게스트하우스를 업데이트한다.
      *
      * @param guesthouse 업데이트할 GuestHouse Entity
      */
-	void updateGuestHouse(GuestHouse guesthouse);
+	void updateGuestHouse(GuestHouse guesthouse)throws RecordNotFoundException;
 
 }
