@@ -1,6 +1,10 @@
 package com.pro.vo;
 
 import java.time.LocalDate;
+
+
+
+public class BookingDate implements Comparable<BookingDate> {
 /**
  * <pre>
  * {@code
@@ -12,7 +16,6 @@ import java.time.LocalDate;
  * @since JDK17
  * 
  */
-public class BookingDate {
 	/**
      * 조회 대상 날짜 (체크인 또는 체크아웃과 무관한 하루 단위)
      */
@@ -48,6 +51,10 @@ public class BookingDate {
 	@Override
 	public String toString() {
 		return "BookingDate [date=" + date + "]";
+	}
+	
+	public int compareTo(BookingDate b) {
+		return this.date.compareTo(b.getDate());
 	}
 	
 	
