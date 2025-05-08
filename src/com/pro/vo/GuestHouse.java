@@ -2,14 +2,39 @@ package com.pro.vo;
 
 import java.util.HashMap;
 import java.util.Map;
-
+/**
+ * VO class representing a GuestHouse with basic information.
+ */
 public class GuestHouse {
+	/**
+     * 게스트하우스 이름 (고유 식별자 역할)
+     */
 	private String name;
+	 /**
+     * 게스트하우스 주소
+     */
 	private String address;
+	 /**
+     * 방 목록: 방 번호(String) → 수용 인원(Integer)
+     */
 	private HashMap<String, Integer> rooms;
+    /**
+     * 주변 명소 정보
+     */
 	private String hotPlace;
+	 /**
+     * 1박 기준 기본 요금
+     */
 	private double price;
-	
+	 /**
+     * Constructs a new GuestHouse VO.
+     *
+     * @param name       게스트하우스 이름 (고유 식별자)
+     * @param rooms      방 목록(방 번호 → 수용 인원)
+     * @param address    게스트하우스 주소
+     * @param hotPlace   주변 명소 정보
+     * @param price      1박 기준 기본 요금
+     */
 	public GuestHouse(String name, String address, HashMap<String, Integer> rooms, String hotPlace, double price) {
 		super();
 		this.name = name;
@@ -89,6 +114,9 @@ public class GuestHouse {
 		this.price = price;
 	}
 
+	 /**
+     * @return string representation
+     */
 	@Override
 	public String toString() {
 		return "GuestHouse [name=" + name + ", address=" + address + ", rooms=" + rooms + ", hotPlace=" + hotPlace
