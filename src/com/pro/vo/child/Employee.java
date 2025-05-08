@@ -39,6 +39,10 @@ public class Employee extends User{
 	public void changeBonus(double bonus) {
 		this.bonus = bonus;
 	}
+	@Override
+	public String toString() {
+		return super.toString() + "dept=" + dept + ", salary=" + salary + ", bonus=" + bonus;
+	}
 	
 	
 }

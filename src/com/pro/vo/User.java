@@ -15,7 +15,7 @@ public abstract class User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", phone number=" + phoneNumber + "]";
+		return "id=" + id + ", name=" + name + ", phone number=" + phoneNumber;
 	}
 
 	public String getId() {
