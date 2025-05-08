@@ -2,7 +2,9 @@ package com.pro.vo;
 
 import java.time.LocalDate;
 
-public class BookingDate {
+
+
+public class BookingDate implements Comparable<BookingDate> {
 	private LocalDate date;
 
 	public BookingDate(LocalDate date) {
@@ -27,6 +29,10 @@ public class BookingDate {
 	@Override
 	public String toString() {
 		return "BookingDate [date=" + date + "]";
+	}
+	
+	public int compareTo(BookingDate b) {
+		return this.date.compareTo(b.getDate());
 	}
 	
 	
