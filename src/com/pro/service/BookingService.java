@@ -40,7 +40,7 @@ public interface BookingService {
      * @param guestName 예약자 이름 확인용
      * @param phone     예약자 전화번호 확인용
      */
-	void cancelBook(String guestName,String phone);
+	void cancelBook(Booking booking);
 	/**
      * 시스템에 등록된 모든 예약 목록을 조회한다.
      *
