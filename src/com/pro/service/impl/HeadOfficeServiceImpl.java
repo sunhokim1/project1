@@ -326,6 +326,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	@Override
 	public void cancelBook(Booking booking) {
 		Boolean flag = true;
+		Boolean find = false;
 		LocalDate current = booking.getStartDate().getDate();
 
 		while (!current.isAfter(booking.getEndDate().getDate())) {
@@ -340,46 +341,50 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		}
 		if (flag == true) {
 			int idx = -1;
-			int xflag = -1;
 			for (Booking b : bookings) {
 				idx++;
 				if (isEqualBooking(b, booking)) {
 					bookings.remove(idx);
-					xflag = 1;
+					find = true;
 					break;
 				}
 			}
-			if(xflag == -1 ) {
+			if(find == false) {
 				return;
 			}
-			
-		} else
+		}else {
 			return;
-
+		}
 	}
 
-
 	@Override
-	public void updateBook(Booking booking) {
-		
-		Booking tmp;
-		Boolean delete_flag = true;
+	public void updateBook(int isbn, Booking booking) {
+		int idx = -1;
+		boolean find = false;
+		boolean flag = false;
 		LocalDate current = booking.getStartDate().getDate();
-		int flag = -1;
-		for(Booking b:bookings) {
-			if(isEqualBooking(b,booking)) {
-				flag = 1;
+		for (Booking b : bookings) {
+			idx++;
+			if (b.getIsbn() == isbn) {
+				find = true;
 				break;
 			}
 		}
-		
-		
-		
-		
-		
-		
-		
-		
+		if (find == true) {
+			while (!current.isAfter(booking.getEndDate().getDate())) {
+				initRoomStatus(booking.getGuesthouse().getAddress());
+				checkRoomStatus(booking.getGuesthouse().getAddress(),current); // current(날짜) 에 대해서 서울게스트하우스 현재 현황
+				if(currentRoomStatus.get(booking.getRoomNumber()) >= booking.getGuesthouse().getRooms().get(booking.getRoomNumber())) {
+					flag = true;
+					break;
+				}
+				current = current.plusDays(1);
+				clearRoomStatus();
+			}
+			if (flag == false) {
+				bookings.set(idx, booking);
+			}
+		}else return;
 	}
 
 

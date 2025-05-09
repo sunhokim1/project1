@@ -27,7 +27,7 @@ public interface BookingService {
      * @return 조회된 Booking 객체, 없으면 null 반환
      */
 
-	void updateBook(Booking booking);
+	void updateBook(int isbn, Booking booking);
 	/**
      * 이름과 전화번호를 기반으로 예약을 취소한다.
      *
