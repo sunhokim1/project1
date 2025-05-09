@@ -75,8 +75,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	public void addGuestHouse(GuestHouse guestHouse) throws DuplicateException{//Duplicate
 		for (GuestHouse g : guestHouses) {
 			if (g.getName().equals(guestHouse.getName())) {
-				System.out.println("이미 등록된 게스트하우스입니다.");
-				return;
+				throw new DuplicateException();
 			}
 		}
 		guestHouses.add(guestHouse);
@@ -89,8 +88,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	public void addUser(User user) throws DuplicateException{//Duplicate
 		for (User u : users) {
 			if (u.getId().equals(user.getId())) {
-				System.out.println("이미 등록된 ID입니다.");
-				return ;
+				throw new DuplicateException();
 			}
 		}
 		users.add(user);
@@ -104,8 +102,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		boolean find = false;
 		int idx = 0;
 		if (guestHouses.isEmpty()) {
-			System.out.println("등록된 게스트하우스가 없습니다.");
-			return ;
+			throw new RecordNotFoundException(name + "은(는) 등록되지 않은 게스트하우스입니다.");
 		}
 		for (GuestHouse g : guestHouses) {
 			if (g.getName().equals(name)) {
@@ -119,7 +116,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			System.out.println(name+"를 삭제하였습니다.");
 			return ;
 		}
-		System.out.println(name + "은(는) 등록되지 않은 게스트하우스입니다.");
+		throw new RecordNotFoundException(name + "은(는) 등록되지 않은 게스트하우스입니다.");
 	}
 	/**
 	 * ID가 id인 User 클래스를 users에서 삭제한다.
@@ -129,8 +126,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		boolean find = false;
 		int idx = 0;
 		if (users.isEmpty()) {
-			System.out.println("등록된 유저가 없습니다.");
-			return ;
+			throw new RecordNotFoundException(id + "은(는) 등록되지 않은 ID입니다.");
 		}
 		for (User u : users) {
 			if (u.getId().equals(id)) {
@@ -144,7 +140,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			System.out.println(id + "번 ID를 삭제하였습니다.");
 			return ;
 		}
-		System.out.println(id + "은(는) 등록되지 않은 ID입니다.");
+		throw new RecordNotFoundException(id + "은(는) 등록되지 않은 ID입니다.");
 	}
 	/**
 	 * ID가 id인 User클래스를 users에서 찾아내 반환한다.
@@ -214,8 +210,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	@Override
 	public void updateUser(User user) throws RecordNotFoundException{//RecordNotFound
 		if (users.isEmpty()) {
-			System.out.println("등록된 유저가 없습니다.");
-			return;
+			throw new RecordNotFoundException("등록되지 않은 유저입니다.");
 		}
 		for (int i=0;i<users.size();i++) {
 			if (users.get(i).getId().equals(user.getId())) {
@@ -230,7 +225,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 				}
 			}
 		}
-		System.out.println("등록되지 않은 유저입니다.");
+		throw new RecordNotFoundException("등록되지 않은 유저입니다.");
 	}
 	/**
 	 * guesthouse의 name과 guestHouses 안의 GuestHouse클래스의 id와 비교하여
@@ -238,18 +233,17 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 */
 	@Override
 	public void updateGuestHouse(GuestHouse guesthouse) throws RecordNotFoundException{//RecordNotFound
-		if (users.isEmpty()) {
-			System.out.println("등록된 유저가 없습니다.");
-			return;
+		if (guestHouses.isEmpty()) {
+			throw new RecordNotFoundException("등록되지 않은 게스트하우스입니다.");
 		}
-		for (int i=0;i<users.size();i++) {
+		for (int i=0;i<guestHouses.size();i++) {
 			if (guestHouses.get(i).getName().equals(guesthouse.getName())) {
 				guestHouses.set(i, guesthouse);
 				System.out.println(guesthouse.getName() + "의 정보가 수정되었습니다.");
 				return ;
 			}
 		}
-		System.out.println("등록되지 않은 게스트하우스입니다.");
+		throw new RecordNotFoundException("등록되지 않은 게스트하우스입니다.");
 	}
 
 

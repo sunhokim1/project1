@@ -3,6 +3,7 @@ package com.pro.service.test;
 import java.util.Scanner;
 
 import com.pro.service.impl.HeadOfficeServiceImpl;
+import com.pro.vo.child.Employee;
 import com.pro.vo.child.Guest;
 
 public class Main {
@@ -44,14 +45,47 @@ public class Main {
 		
 			switch (num) {
 				case 1 :
-					
-					service.addUser(new Guest(null, null, null, null));
 					break;
+				case 2:
+					break;
+				case 3:
+					break;
+				case 4: 
+					break;
+				case 5:
+					break;
+				default:
 					
 			}
 		}
 	}
 	public static void employeeService() {
+		Scanner sc = new Scanner(System.in);
+		boolean run =true;
+		HeadOfficeServiceImpl service = HeadOfficeServiceImpl.getInstance();
+		while(run) {
+			int num = sc.nextInt();
+			System.out.println("===================================================");
+			System.out.println("=================Employee Service================");
+			System.out.println();
+			System.out.println("=================================================Menu=================================================");
+			System.out.println("1. 직원 등록 | 2. 지점별 월 매출 확인 | 3. 지점별 분기 매출 확인 | 4. 지점별 연 매출 확인 | 5. 인기 핫플레이스 | 6. 종료");
+			
+			switch (num) {
+			case 1: 
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4: 
+				break;
+			case 5:
+				break;
+			default:
+				
+			}
+		}
 		
 	}
 }
