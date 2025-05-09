@@ -365,20 +365,39 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 
 	@Override
 	public List<Booking> getBooks() {
-		// TODO Auto-generated method stub
-		return null;
+		return bookings;
 	}
 
 	@Override
 	public List<Booking> getBooks(String guestId) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Booking> temp = new ArrayList<Booking>();
+		for(Booking b:bookings) {
+			if(b.getGuest().getId().equals(guestId)) {
+				temp.add(b);
+			}
+		}
+		return temp;
 	}
-
+///////
 	@Override
 	public Boolean isroomFull() {
-		// TODO Auto-generated method stub
-		return null;
+		LocalDate today=LocalDate.now(); 
+		for(GuestHouse gh:guestHouses) {
+			initRoomStatus(gh.getAddress()); 
+			checkRoomStatus(gh.getAddress(), today);
+			
+			for(String roomNo: gh.getRooms().keySet()) {
+				int booked = currentRoomStatus.getOrDefault(roomNo, 0);
+				int capacity = gh.getRooms().get(roomNo);
+				
+				if(booked<capacity) {
+					clearRoomStatus();
+					return false;
+				}
+			} clearRoomStatus();
+		}
+		
+		return true;
 	}
 
 	@Override
