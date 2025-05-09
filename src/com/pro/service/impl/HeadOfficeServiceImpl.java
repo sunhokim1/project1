@@ -378,7 +378,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		}
 		return temp;
 	}
-///////
+
 	@Override
 	public Boolean isroomFull() {
 		LocalDate today=LocalDate.now(); 
