@@ -426,45 +426,44 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 
 	@Override
-	public double getSalesForMonth(int year, int month) {//InvalidTransactionException
+	public double getSalesForDay(int month, int day) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public double getSalesForWeekly(int month, int weekly) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public double getSalesForMonth(int month) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForQuarter(int year, int quarter) {//InvalidTransactionException
+	public double getSalesForMonth(int month, int day, String guestHouseName) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForYear(int year) {//InvalidTransactionException
+	public double getSalesForQuarter(int month, int weekly, String guestHouseName) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForMonth(int year, int month, String guestHouseName) {//InvalidTransactionException
+	public double getSalesForYear(int month, String guestHouseName) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForQuarter(int year, int quarter, String guestHouseName) {//InvalidTransactionException
+	public int getPeakSeason(int month) {//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	@Override
-	public double getSalesForYear(int year, String guestHouseName) {//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getPeakSeason(int year) {//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 
 }
