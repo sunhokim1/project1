@@ -49,7 +49,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 */
 	private HashMap<String,Integer> currentRoomStatus;
 	
-	
+	private int isbn = 0;
 	/**
 	 * 기본 생성자
 	 */
@@ -76,6 +76,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		for (GuestHouse g : guestHouses) {
 			if (g.getName().equals(guestHouse.getName())) {
 				System.out.println("이미 등록된 게스트하우스입니다.");
+				
 				return;
 			}
 		}
@@ -268,7 +269,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		}
 	}
 	
-	public void checkRoomStatus(String location,LocalDate currentDate) {
+	private void checkRoomStatus(String location,LocalDate currentDate) {
 		for(Booking b:bookings) {
 			// current_Date가 date2 라면 startdate.isBefore, endDAte.isAfter
 			if(b.getGuesthouse().getAddress().equals(location)) {
@@ -304,7 +305,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			current = current.plusDays(1);
 			clearRoomStatus();
 		}
-		if(flag == true) bookings.add(booking);
+		if(flag == true) {
+			isbn++;
+			booking.setIsbn(isbn);
+			bookings.add(booking);
+		}
 		else return;	
 	}
 	// public HashMap<Integer,Book> searchBookByTitle(String title) {
@@ -342,13 +347,19 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		}
 		if (flag == true) {
 			int idx = -1;
+			int xflag = -1;
 			for (Booking b : bookings) {
 				idx++;
 				if (isEqualBooking(b, booking)) {
 					bookings.remove(idx);
+					xflag = 1;
 					break;
 				}
 			}
+			if(xflag == -1 ) {
+				return;
+			}
+			
 		} else
 			return;
 
@@ -357,7 +368,24 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 
 	@Override
 	public void updateBook(Booking booking) {
-		// TODO Auto-generated method stub
+		
+		Booking tmp;
+		Boolean delete_flag = true;
+		LocalDate current = booking.getStartDate().getDate();
+		int flag = -1;
+		for(Booking b:bookings) {
+			if(isEqualBooking(b,booking)) {
+				flag = 1;
+				break;
+			}
+		}
+		
+		
+		
+		
+		
+		
+		
 		
 	}
 
