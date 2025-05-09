@@ -310,12 +310,50 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	// public HashMap<Integer,Book> searchBookByTitle(String title) {
 		
 	//}
-
-	@Override
-	public Booking getBook(String guestName, String phone) {
-		// TODO Auto-generated method stub
-		return null;
+	private boolean isEqualBooking(Booking b,Booking booking) 
+	{
+		
+		if((b.getGuest().getId().equals(booking.getGuest().getId()))
+						&& (b.getGuesthouse().getName().equals(booking.getGuesthouse().getName()))
+						&& (b.getRoomNumber().equals(booking.getRoomNumber()))
+						&& (b.getStartDate().getDate().isEqual(booking.getStartDate().getDate()))
+						&& (b.getEndDate().getDate().isEqual(booking.getEndDate().getDate()))) 
+		{
+			return true;
+		}
+		else 
+			return false;
 	}
+	
+	@Override
+	public void cancelBook(Booking booking) {
+		Boolean flag = true;
+		LocalDate current = booking.getStartDate().getDate();
+
+		while (!current.isAfter(booking.getEndDate().getDate())) {
+			initRoomStatus(booking.getGuesthouse().getAddress());
+			checkRoomStatus(booking.getGuesthouse().getAddress(), current); // current(날짜) 에 대해서 서울게스트하우스 현재 현황
+			if (currentRoomStatus.get(booking.getRoomNumber()) <= 0) {
+				flag = false;
+				break;
+			}
+			current = current.plusDays(1);
+			clearRoomStatus();
+		}
+		if (flag == true) {
+			int idx = -1;
+			for (Booking b : bookings) {
+				idx++;
+				if (isEqualBooking(b, booking)) {
+					bookings.remove(idx);
+					break;
+				}
+			}
+		} else
+			return;
+
+	}
+
 
 	@Override
 	public void updateBook(Booking booking) {
@@ -323,11 +361,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		
 	}
 
-	@Override
-	public void cancelBook(String guestName, String phone) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 	@Override
 	public List<Booking> getBooks() {
