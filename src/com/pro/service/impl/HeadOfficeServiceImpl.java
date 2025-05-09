@@ -380,11 +380,10 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 ////
 	@Override
-	public Boolean isroomFull() {
-		LocalDate today=LocalDate.now(); 
+	public Boolean isroomFull(LocalDate current) { 
 		for(GuestHouse gh:guestHouses) {
 			initRoomStatus(gh.getAddress()); 
-			checkRoomStatus(gh.getAddress(), today);
+			checkRoomStatus(gh.getAddress(), current);
 			
 			for(String roomNo: gh.getRooms().keySet()) {
 				int booked = currentRoomStatus.getOrDefault(roomNo, 0);

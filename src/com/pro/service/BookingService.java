@@ -53,6 +53,6 @@ public interface BookingService {
      *
      * @return 예약 가능 객실이 없으면 true, 그렇지 않으면 false
      */
-	Boolean isroomFull();
+	Boolean isroomFull(LocalDate current);
 
 }
