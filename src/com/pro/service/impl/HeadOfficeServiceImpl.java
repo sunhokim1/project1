@@ -13,7 +13,7 @@ import com.pro.vo.GuestHouse;
 import com.pro.vo.User;
 import com.pro.vo.child.Employee;
 import com.pro.vo.child.Guest;
-import com.self.vo.Book;
+
 /**
  * <pre>
  * {@code
@@ -47,7 +47,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	/**
 	 * 
 	 */
-	private HashMap<String,Integer> currentMemory;
+	private HashMap<String,Integer> currentRoomStatus;
 	
 	
 	/**
@@ -58,7 +58,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		bookings = new ArrayList<Booking>();
 		guestHouses = new ArrayList<GuestHouse>();
 		users = new ArrayList<User>();
-		HashMap<String,Integer> currentMemory = new HashMap<>();
+		HashMap<String,Integer> currentRoomStatus = new HashMap<>();
 	}
 	/**
 	 * 싱글턴으로 관리하기 위해 getInstance로만 가져가 쓸수 있도록 하였다.
@@ -253,7 +253,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 
 
-	private void initializeMemory(String location) 
+	private void initRoomStatus(String location) 
 	{
 		// location이 같고 시간 안에 있는 값.
 		GuestHouse g = new GuestHouse();
@@ -263,61 +263,49 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 				g = b.getGuesthouse();
 			}
 		}
-		
 		for(String key:g.getRooms().keySet()) {
-			currentMemory.put(key, 0);
+			currentRoomStatus.put(key, 0);
 		}
-		
-		
 	}
 	
-	public void checkMemory(String location,LocalDate currentDate) {
+	public void checkRoomStatus(String location,LocalDate currentDate) {
 		for(Booking b:bookings) {
 			// current_Date가 date2 라면 startdate.isBefore, endDAte.isAfter
 			if(b.getGuesthouse().getAddress().equals(location)) {
-				if((b.getStartDate().getDate().isBefore(currentDate) || b.getStartDate().getDate().isEqual(currentDate))&& ( b.getEndDate().getDate().isAfter(currentDate) || b.getStartDate().getDate().isEqual(currentDate))) 
+				if((b.getStartDate().getDate().isBefore(currentDate) || b.getStartDate().getDate().isEqual(currentDate))
+						&& ( b.getEndDate().getDate().isAfter(currentDate) || b.getStartDate().getDate().isEqual(currentDate))) 
 				{
 					String address = b.getGuesthouse().getAddress();
-					int count = currentMemory.getOrDefault(address, 0);
-					currentMemory.put(address, count + 1);
+					int count = currentRoomStatus.getOrDefault(address, 0);
+					currentRoomStatus.put(address, count + 1);
 				}
 			}
-				
 		}
-		
-		
-		
 	}
 	
-	private void clearMemory() {
-		currentMemory.clear();
+	private void clearRoomStatus() {
+		currentRoomStatus.clear();
 	}
 	
 	@Override
 	public void addBook(Booking booking) {
-		
 		// checkMemory(String location,LocalDate currentDate)
 		// 날짜 한개와 장소에 대해서 check하는 곳
 		Boolean flag = true;
 		LocalDate current = booking.getStartDate().getDate();
-		
 		// booking 데이터에 대해서 장소에 대한 크기 0 인 room
 		while (!current.isAfter(booking.getEndDate().getDate())) {
-			initializeMemory(booking.getGuesthouse().getAddress());
-			checkMemory(booking.getGuesthouse().getAddress(),current); // current(날짜) 에 대해서 서울게스트하우스 현재 현황
-			if(currentMemory.get(booking.getRoomNumber()) >= booking.getGuesthouse().getRooms().get(booking.getRoomNumber())) {
+			initRoomStatus(booking.getGuesthouse().getAddress());
+			checkRoomStatus(booking.getGuesthouse().getAddress(),current); // current(날짜) 에 대해서 서울게스트하우스 현재 현황
+			if(currentRoomStatus.get(booking.getRoomNumber()) >= booking.getGuesthouse().getRooms().get(booking.getRoomNumber())) {
 				flag = false;
 				break;
 			}
 			current = current.plusDays(1);
+			clearRoomStatus();
 		}
-		
-	if(flag == true) {
-		bookings.add(booking);
-	} else {
-		return;
-	}
-		
+		if(flag == true) bookings.add(booking);
+		else return;	
 	}
 	// public HashMap<Integer,Book> searchBookByTitle(String title) {
 		
