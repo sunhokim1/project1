@@ -2,8 +2,10 @@ package com.pro.vo;
 
 import com.pro.vo.child.Guest;
 
+
+
 public class Booking implements Comparable<Booking>{
-	
+	private int isbn=0;
 	private Guest guest;
 	private GuestHouse guesthouse;
 	private String roomNumber;
@@ -18,6 +20,13 @@ public class Booking implements Comparable<Booking>{
 		this.roomNumber = roomNumber;
 		this.startDate = startDate;
 		this.endDate = endDate;
+	}
+	
+	public int getIsbn() {
+		return isbn;
+	}
+	public void setIsbn(int isbn) {
+		this.isbn = isbn;
 	}
 	public Guest getGuest() {
 		return guest;
