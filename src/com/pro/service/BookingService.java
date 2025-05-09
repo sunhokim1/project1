@@ -26,13 +26,7 @@ public interface BookingService {
      * @param phone     예약자 전화번호
      * @return 조회된 Booking 객체, 없으면 null 반환
      */
-	
-	Booking getBook(String guestName,String phone);
-	 /**
-     * 기존 예약 정보를 업데이트한다.
-     *
-     * @param booking 수정할 Booking 엔티티
-     */
+
 	void updateBook(Booking booking);
 	/**
      * 이름과 전화번호를 기반으로 예약을 취소한다.
