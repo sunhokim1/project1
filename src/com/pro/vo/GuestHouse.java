@@ -43,8 +43,9 @@ public class GuestHouse {
      * @param hotPlace   주변 명소 정보
      * @param price      1박 기준 기본 요금
      */
+	
+	public GuestHouse() {}
 	public GuestHouse(String name, String address, HashMap<String, Integer> rooms, String hotPlace, double price) {
-		super();
 		this.name = name;
 		this.address = address;
 		this.rooms = rooms;

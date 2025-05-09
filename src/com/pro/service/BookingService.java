@@ -1,5 +1,7 @@
 package com.pro.service;
 
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import com.pro.vo.Booking;
 /**
@@ -24,6 +26,7 @@ public interface BookingService {
      * @param phone     예약자 전화번호
      * @return 조회된 Booking 객체, 없으면 null 반환
      */
+	
 	Booking getBook(String guestName,String phone);
 	 /**
      * 기존 예약 정보를 업데이트한다.
