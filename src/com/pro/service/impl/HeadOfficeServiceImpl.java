@@ -25,7 +25,7 @@ import com.pro.vo.child.Guest;
  * @version project version 0.0.1
  * @since JDK17
  * 
- */
+ *///
 public class HeadOfficeServiceImpl implements HeadOfficeService{
 	/**
 	 * 싱글턴을 위해 static final로 선언 되었다.
