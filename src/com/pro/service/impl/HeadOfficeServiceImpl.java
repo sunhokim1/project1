@@ -275,7 +275,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 				}
 			}
 		}
-	}
+	}//
 	
 	private void clearRoomStatus() {
 		currentRoomStatus.clear();
