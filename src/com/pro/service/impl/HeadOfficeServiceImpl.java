@@ -75,9 +75,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	public void addGuestHouse(GuestHouse guestHouse) throws DuplicateException{//Duplicate
 		for (GuestHouse g : guestHouses) {
 			if (g.getName().equals(guestHouse.getName())) {
-				System.out.println("이미 등록된 게스트하우스입니다.");
-				
-				return;
+				throw new DuplicateException();
 			}
 		}
 		guestHouses.add(guestHouse);
