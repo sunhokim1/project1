@@ -596,38 +596,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    return totalSales;
 	}
 	
-	private int[] divisionSeason(LocalDate startDate, LocalDate endDate) {
-		int[] divisionWeek = new int[4];
-		divisionWeek[0] = endDate.getDayOfMonth() - startDate.getDayOfMonth() + 1;
-		divisionWeek[1] = 0;
-		divisionWeek[2] = (startDate.getDayOfMonth() / 7);
-		divisionWeek[3] = divisionWeek[2] + 1;
-		if (startDate.getDayOfMonth() <= 7 && endDate.getDayOfMonth() > 7) {
-			divisionWeek[0] = 8 - startDate.getDayOfMonth();
-			divisionWeek[1] = endDate.getDayOfMonth() - 7;
-		}else if (startDate.getDayOfMonth() <= 14 && endDate.getDayOfMonth() > 14) {
-			divisionWeek[0] = 15 - startDate.getDayOfMonth();
-			divisionWeek[1] = endDate.getDayOfMonth() - 14;
-		}else if (startDate.getDayOfMonth() <= 21 && endDate.getDayOfMonth() > 21) {
-			divisionWeek[0] = 22 - startDate.getDayOfMonth();
-			divisionWeek[1] = endDate.getDayOfMonth() - 21;
-		}else if (startDate.getDayOfMonth() <= 28 && endDate.getDayOfMonth() > 28) {
-			divisionWeek[0] = 29 - startDate.getDayOfMonth();
-			divisionWeek[1] = endDate.getDayOfMonth() - 28;
-		}else if (startDate.getDayOfMonth() <= 31 && endDate.getDayOfMonth() < 7) {
-			divisionWeek[0] = 32 - startDate.getDayOfMonth();
-			divisionWeek[1] = 7 - endDate.getDayOfMonth();
-		}
-		return divisionWeek;
-	}
-	
-	@Override
-	public int getPeakSeason(int month) throws InvalidTransactionException{//InvalidTransactionException
+	private double[] salesForWeekProcess(int year, int month) throws InvalidTransactionException {
 		if (month < 1 || month > 12) {
 	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
 	    }
-
-	    int year = LocalDate.now().getYear();
+		
 	    LocalDate monthStart = LocalDate.of(year, month, 1);
 	    LocalDate monthEnd   = monthStart.with(TemporalAdjusters.lastDayOfMonth());
 
@@ -642,19 +615,31 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	        for (Booking b : bookings) {
 	            LocalDate start = b.getStartDate().getDate();
 	            LocalDate end   = b.getEndDate().getDate();
-	            // 겹치지 않으면 건너뛰기
 	            if (end.isBefore(weekStart) || start.isAfter(weekEnd)) continue;
-
-	            // 겹치는 날짜 계산
 	            LocalDate effectiveStart = start.isBefore(weekStart) ? weekStart : start;
 	            LocalDate effectiveEnd   = end.isAfter(weekEnd)   ? weekEnd   : end;
 	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
-
 	            weekSales[i] += days * b.getGuesthouse().getPrice();
 	        }
 	    }
+	    return weekSales;
+	}
+	// 지정된 월의 주별 매출을 조회한다.
+	@Override
+	public double getSalesForWeekly(int year, int month, int weekly) throws InvalidTransactionException {
+		double[] weekSales = salesForWeekProcess(year, month);
+		return weekSales[weekly - 1];
+	}
+	
+	@Override
+	public int getPeakSeason(int month) throws InvalidTransactionException{
+		if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+	    int year = LocalDate.now().getYear();
+	    
+	    double[] weekSales = salesForWeekProcess(year, month);
 
-	    // 최대 매출을 기록한 주 찾기 (1-based)
 	    int peakWeek = 1;
 	    double maxSales = weekSales[0];
 	    for (int i = 1; i < weekSales.length; i++) {
@@ -663,15 +648,9 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	            peakWeek = i + 1;
 	        }
 	    }
-
 	    return peakWeek;
 	}
-	// 지정된 월의 주별 매출을 조회한다.
-	@Override
-	public double getSalesForWeekly(int month, int weekly) throws InvalidTransactionException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 	
 
 }

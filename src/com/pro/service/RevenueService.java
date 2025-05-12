@@ -26,7 +26,7 @@ public interface RevenueService {
      * @param weekly 조회할 주(1~4)
      * @return 지정된 기간의 매출 합계
      */
-	double getSalesForWeekly(int month, int weekly)throws InvalidTransactionException;
+	double getSalesForWeekly(int year, int month, int weekly)throws InvalidTransactionException;
 	/**
      * 지정된 달의 전체 매출을 조회한다.
      *
