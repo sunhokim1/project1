@@ -2,6 +2,7 @@ package com.pro.service.impl.test;
 
 import java.util.Scanner;
 
+import com.pro.exception.InvalidTransactionException;
 import com.pro.service.impl.HeadOfficeServiceImpl;
 import com.pro.vo.*;
 import com.pro.vo.child.Employee;
@@ -106,6 +107,7 @@ public class HeadOfficeServiceImplTest {
                         }
                         System.out.println("예약 번호를 입력해주세요 : ");
                         int reservationNum = sc.nextInt();
+                        // update는 체크인날짜,체크아웃날짜만 바뀐다.
                         System.out.println("언제로 변경하시겠습니까?");
                         System.out.println("게스트하우스 체크인 날짜를 입력하세요 : ");
                         String startdate02 = sc.nextLine();
@@ -248,16 +250,16 @@ public class HeadOfficeServiceImplTest {
         return map;
     }
 
-    private static void printBookings(String title, HeadOfficeServiceImpl service) {
+    private static void printBookings(String title, HeadOfficeServiceImpl service)  {
         System.out.println("\n" + title);
         for (Booking b : service.getBooks()) {
             System.out.println(b);
         }
     }
-    private static void salesInformaion(HeadOfficeServiceImpl service) {
+    private static void salesInformaion(HeadOfficeServiceImpl service)  {
     	Scanner scanner = new Scanner(System.in);
     	int tmp02 = -1;
-    	while(tmp01 != 7) {
+    	while(tmp02 != 7) {
     		System.out.println("메뉴를 선택 하세요");
     		System.out.println("1. 전체 일간 매출 || 2. 전체 주간 매출 || 3. 전체 월간 매출 || 4. 한 게스트하우스에 대한 일간 매출 || 5. 한 게스트하우스에 대한 주간 매출 || 6. 한 게스트하우스에 대한 월간 매출 || 7. 종료");
     		System.out.print("선택 >> ");
@@ -271,8 +273,13 @@ public class HeadOfficeServiceImplTest {
 	    		int month = scanner.nextInt();
 	    		System.out.println("몇 일입니까?");
 	    		int day = scanner.nextInt();
+	    		try {
 	    		System.out.println(service.getSalesForDay(month, day));
-				break;
+	    		} catch(InvalidTransactionException e) {
+	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+	    		}
+	    		break;
+	   
 			case 2:
 				
 				break;
@@ -280,8 +287,12 @@ public class HeadOfficeServiceImplTest {
 				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
 				System.out.println("몇 월입니까?");
 	    		int month02 = scanner.nextInt();
-	    		System.out.println(service.getSalesForMonth(month02));
-				break;
+	    		try {	
+	    			System.out.println(service.getSalesForMonth(month02));
+	    		} catch(InvalidTransactionException e) {
+	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+	    		}
+				break; 
 			case 4:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
 				String guestHouse = scanner.nextLine();
@@ -290,17 +301,25 @@ public class HeadOfficeServiceImplTest {
 	    		int month03 = scanner.nextInt();
 	    		System.out.println("몇 일입니까?");
 	    		int day03 = scanner.nextInt();
-	    		System.out.println(service.getSalesForDay(month03, day03,guestHouse));
+	    		try {
+	    			System.out.println(service.getSalesForDay(month03, day03,guestHouse));
+	    		} catch(InvalidTransactionException e) {
+	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+	    		}
 				break;
 			case 5:
-				System.out.println("▶ 종료합니다.");
+				
 				break;
 			case 6:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
 				String guestHouse02 = scanner.nextLine();
 				System.out.println("몇 월입니까?");
 	    		int month04 = scanner.nextInt();
-	    		System.out.println(service.getSalesForMonth(month04, guestHouse02));
+	    		try {	
+	    			System.out.println(service.getSalesForMonth(month04, guestHouse02));
+	    		} catch(InvalidTransactionException e) {
+	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+	    		}
 				break;
 			case 7:
 	
