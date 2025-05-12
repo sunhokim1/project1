@@ -51,7 +51,7 @@ public interface RevenueService {
      * @param guestHouseName  조회할 게스트하우스 이름
      * @return 지정된 기간 및 숙소의 매출 합계
      */
-	double getSalesForQuarter(int month, int weekly, String guestHouseName)throws InvalidTransactionException;
+	double getSalesForWeekly(int month, int weekly, String guestHouseName)throws InvalidTransactionException;
 	/**
      * 지정된 달과  게스트하우스 이름을 기준으로 매출을 조회한다.
      *

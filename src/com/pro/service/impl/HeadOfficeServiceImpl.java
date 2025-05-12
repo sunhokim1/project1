@@ -251,6 +251,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 
 
+	/**
+	 * location을 address필드로 가지고 있는 GuestHouse를 찾아
+	 * HashMap을 key, 0으로 초기화 시킨다.
+	 * @param location GuestHouse의 Address
+	 */
 	private void initRoomStatus(String location) {
 	    GuestHouse g = null;
 	    for (GuestHouse gh : guestHouses) {
@@ -270,12 +275,16 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 	
 	// ✅ checkRoomStatus - roomNumber 기준으로 예약 수 누적
+	/**
+	 * 초기화 된 HashMap를 for문으로 조건이 충족할 때 roomNo에 해당하는 Integer값을 1개 올린다.
+	 * @param location 게스트하우스의 Address
+	 * @param currentDate 현재 날짜
+	 */
 	private void checkRoomStatus(String location, LocalDate currentDate) {
 	    for (Booking b : bookings) {
 	        if (b.getGuesthouse().getAddress().equals(location)) {
 	            if ((b.getStartDate().getDate().isBefore(currentDate) || b.getStartDate().getDate().isEqual(currentDate)) &&
 	                (b.getEndDate().getDate().isAfter(currentDate) || b.getEndDate().getDate().isEqual(currentDate))) {
-
 	                String roomNo = b.getRoomNumber();
 	                int count = currentRoomStatus.getOrDefault(roomNo, 0);
 	                currentRoomStatus.put(roomNo, count + 1);
@@ -283,40 +292,37 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	        }
 	    }
 	}
-	
+	/**
+	 * roomStatus의 모든 값을 clear한다.
+	 */
 	private void clearRoomStatus() {
 		currentRoomStatus.clear();
 	}
-	
+	/**
+	 * 새로운 booking을 추가한다.
+	 */
 	@Override
 	public void addBook(Booking booking) {
 	    for (Booking b : bookings) {
 	        if (isEqualBooking(booking, b)) {
-	            // 중복 예약이면 추가 금지
 	            System.out.println("중복 예약입니다. 예약이 거부되었습니다.");
 	            return;
 	        }
 	    }
-
 	    boolean isAvailable = true;
 	    LocalDate current = booking.getStartDate().getDate();
-
 	    while (!current.isAfter(booking.getEndDate().getDate())) {
 	        initRoomStatus(booking.getGuesthouse().getAddress());
 	        checkRoomStatus(booking.getGuesthouse().getAddress(), current);
-
 	        int currentBooked = currentRoomStatus.getOrDefault(booking.getRoomNumber(), 0);
 	        int roomCapacity = booking.getGuesthouse().getRooms().getOrDefault(booking.getRoomNumber(), 0);
-
 	        if (currentBooked >= roomCapacity) {
 	            isAvailable = false;
 	            break;
 	        }
-
 	        current = current.plusDays(1);
 	        clearRoomStatus();
 	    }
-
 	    if (isAvailable) {
 	        isbn++;
 	        booking.setIsbn(isbn);
@@ -326,12 +332,13 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	        System.out.println("예약이 실패했습니다. 해당 날짜에 방이 가득 찼습니다.");
 	    }
 	}
-	// public HashMap<Integer,Book> searchBookByTitle(String title) {
-		
-	//}
-	private boolean isEqualBooking(Booking b,Booking booking) 
-	{
-		
+	/**
+	 * 같은 Booking인지 확인하는 메서드
+	 * @param b 원래 있던 Booking
+	 * @param booking 들어올 Booking
+	 * @return 있으면 true, 없으면 false
+	 */
+	private boolean isEqualBooking(Booking b,Booking booking) {
 		if((b.getGuest().getId().equals(booking.getGuest().getId()))
 						&& (b.getGuesthouse().getName().equals(booking.getGuesthouse().getName()))
 						&& (b.getRoomNumber().equals(booking.getRoomNumber()))
@@ -343,7 +350,9 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		else 
 			return false;
 	}
-	
+	/**
+	 * Booking을 bookings에서 지워버리는 메서드
+	 */
 	@Override
 	public void cancelBook(Booking booking) {
 		Boolean flag = true;
@@ -377,7 +386,9 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			return;
 		}
 	}
-
+	/**
+	 * bookings에 담겨있는 Booking의 정보를 수정하는 메서드
+	 */
 	@Override
 	public void updateBook(int isbn, Booking booking) {
 		int idx = -1;
@@ -407,14 +418,16 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			}
 		}else return;
 	}
-
-
-
+	/**
+	 *  bookings의 모든 Bookings를 반환하는 메서드
+	 */
 	@Override
 	public List<Booking> getBooks() {
 		return bookings;
 	}
-	
+	/**
+	 * isbn인 Booking의 정보를 반환하는 메서드
+	 */
 	public Booking getBook(int isbn) {
 		Booking findBook = null;
 		for(Booking b:bookings) {
@@ -428,7 +441,9 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		}
 		return findBook;
 	}
-
+	/**
+	 * guestId로 입력된 모든 Booking클래스의 정보를 반환한다.
+	 */
 	@Override
 	public List<Booking> getBooks(String guestId) {
 		List<Booking> temp = new ArrayList<Booking>();
@@ -439,155 +454,115 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		}
 		return temp;
 	}
-////
+	/**
+	 * 그 게스트하우스의 모든 객실이 찼는지 확인한다.
+	 */
 	@Override
-	public Boolean isroomFull(LocalDate current) { 
-		for(GuestHouse gh:guestHouses) {
-			initRoomStatus(gh.getAddress()); 
-			checkRoomStatus(gh.getAddress(), current);
-			
-			for(String roomNo: gh.getRooms().keySet()) {
-				int booked = currentRoomStatus.getOrDefault(roomNo, 0);
-				int capacity = gh.getRooms().get(roomNo);
-				
-				if(booked<capacity) {
-					clearRoomStatus();
-					return false;
-				}
-			} clearRoomStatus();
+	public Boolean isroomFull(String guestHouseName, LocalDate current) { 
+		GuestHouse temp = null;
+		for (GuestHouse gh : guestHouses) {
+			if (gh.getName().equals(guestHouseName)) {
+				temp = gh;
+				break;
+			}
 		}
-		
+		if (temp == null) {// recordNotFoundException
+			System.out.println("찾으시는 게스트하우스가 없습니다.");
+			return false;
+		}
+		initRoomStatus(temp.getAddress()); 
+		checkRoomStatus(temp.getAddress(), current);
+		for(String roomNo: temp.getRooms().keySet()) {
+			int booked = currentRoomStatus.getOrDefault(roomNo, 0);
+			int capacity = temp.getRooms().get(roomNo);		
+			if(booked<capacity) {
+				clearRoomStatus();
+				return false;
+			}
+			clearRoomStatus();
+		}
 		return true;
 	}
+	
+	private double salesCaculator(LocalDate startDate, LocalDate endDate, Booking b) {
+	    LocalDate start = b.getStartDate().getDate();
+	    LocalDate end   = b.getEndDate().getDate();
 
-	@Override
-	public double getSalesForDay(int month, int day) throws InvalidTransactionException{
-		// 월 유효성 검사
-	    if (month < 1 || month > 12) {
-	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
-	    }
-	    // 해당 월의 마지막 일을 구해 일 유효성 검사
-	    YearMonth ym = YearMonth.of(LocalDate.now().getYear(), month);
-	    if (day < 1 || day > ym.lengthOfMonth()) {
-	        throw new InvalidTransactionException("잘못된 일입니다: " + day);
-	    }
+	    LocalDate effectiveStart = start.isBefore(startDate) ? startDate : start;
+	    LocalDate effectiveEnd   = end.isAfter(endDate) ? endDate : end;
 
-	    LocalDate targetDate = LocalDate.of(ym.getYear(), month, day);
-	    double total = 0.0;
+	    if (effectiveStart.isAfter(effectiveEnd)) return 0.0;
 
-	    for (Booking b : bookings) {
-	        LocalDate start = b.getStartDate().getDate();
-	        LocalDate end   = b.getEndDate().getDate();
-	        if (!targetDate.isBefore(start) && !targetDate.isAfter(end)) {
-	            total += b.getGuesthouse().getPrice();
-	        }
-	    }
-
-	    return total;
+	    long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
+	    return days * b.getGuesthouse().getPrice();
 	}
-	@Override
-	public double getSalesForMonth(int month) throws InvalidTransactionException{
-		 // 월 유효성 검사
-	    if (month < 1 || month > 12) {
-	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
-	    }
-
-	    int year = LocalDate.now().getYear();
-	    YearMonth ym = YearMonth.of(year, month);
-	    LocalDate monthStart = ym.atDay(1);
-	    LocalDate monthEnd   = ym.atEndOfMonth();
-
+	
+	/**
+	 * startDate부터 endDate의 범위의 매출을 계산한다.
+	 * @param startDate 시작날짜
+	 * @param endDate 종료날짜
+	 * @return tatalSales;
+	 */
+	private double salesInRangeProcess(LocalDate startDate, LocalDate endDate) {
 	    double totalSales = 0.0;
 
 	    for (Booking b : bookings) {
-	        LocalDate start = b.getStartDate().getDate();
-	        LocalDate end   = b.getEndDate().getDate();
-
-	        // 예약 기간을 대상 월 기간에 맞춰 잘라냄
-	        LocalDate effectiveStart = start.isBefore(monthStart) ? monthStart : start;
-	        LocalDate effectiveEnd   = end.isAfter(monthEnd)   ? monthEnd   : end;
-
-	        // 잘라낸 기간이 유효한지 확인
-	        if (!effectiveStart.isAfter(effectiveEnd)) {
-	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
-	            totalSales += days * b.getGuesthouse().getPrice();
-	        }
+	        totalSales += salesCaculator(startDate, endDate, b);
 	    }
-
 	    return totalSales;
 	}
-
+	
+	/**
+	 * 입력한 날의 매출을 double로 반환한다.
+	 */
 	@Override
-	public double getSalesForDay(int month, int day, String guestHouseName) throws InvalidTransactionException{//InvalidTransactionException
-		// 월 유효성 검사
+	public double getSalesForDay(int month, int day) throws InvalidTransactionException {
 	    if (month < 1 || month > 12) {
 	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
 	    }
-	    // 일 유효성 검사
 	    YearMonth ym = YearMonth.of(LocalDate.now().getYear(), month);
 	    if (day < 1 || day > ym.lengthOfMonth()) {
 	        throw new InvalidTransactionException("잘못된 일입니다: " + day);
 	    }
-	    // 지점 존재 여부 검사
-	    boolean exists = guestHouses.stream()
-	        .anyMatch(g -> g.getName().equals(guestHouseName));
-	    if (!exists) {
-	        throw new InvalidTransactionException("등록되지 않은 지점입니다: " + guestHouseName);
-	    }
-
-	    LocalDate targetDate = LocalDate.of(ym.getYear(), month, day);
-	    double total = 0.0;
-
-	    for (Booking b : bookings) {
-	        if (!b.getGuesthouse().getName().equals(guestHouseName)) {
-	            continue;
-	        }
-	        LocalDate start = b.getStartDate().getDate();
-	        LocalDate end   = b.getEndDate().getDate();
-	        if (!targetDate.isBefore(start) && !targetDate.isAfter(end)) {
-	            total += b.getGuesthouse().getPrice();
-	        }
-	    }
-	    return total;
+	    LocalDate target = LocalDate.of(ym.getYear(), month, day);
+	    return salesInRangeProcess(target, target);  // 하루만 계산
 	}
-
+	/**
+	 * 입력한 달의 매출을 double로 반환한다.
+	 */
 	@Override
-	public double getSalesForQuarter(int month, int weekly, String guestHouseName) throws InvalidTransactionException{//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getSalesForMonth(int month, String guestHouseName) throws InvalidTransactionException{//InvalidTransactionException
-		// 현재 연도를 기준으로 조회할 월의 시작·끝일을 계산
-	    int year = LocalDate.now().getYear();
-	    LocalDate monthStart = LocalDate.of(year, month, 1);
-	    LocalDate monthEnd   = monthStart.with(TemporalAdjusters.lastDayOfMonth());
-       
-	    //월 유효성 검사
+	public double getSalesForMonth(int month) throws InvalidTransactionException {
 	    if (month < 1 || month > 12) {
 	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
 	    }
-	    // 지점 유효성 검사
+	    int year = LocalDate.now().getYear();
+	    YearMonth ym = YearMonth.of(year, month);
+	    return salesInRangeProcess(ym.atDay(1), ym.atEndOfMonth());
+	}
+	/**
+	 * 
+	 * startDate부터 endDate의 범위의 매출을 계산한다.
+	 * @param startDate 시작날짜
+	 * @param endDate 종료날짜
+	 * @param guestHouseName 게스트하우스 이름
+	 * @return totalSales
+	 * @throws InvalidTransactionException
+	 */
+	private double salesInRangeProcess(LocalDate startDate, LocalDate endDate, String guestHouseName) throws InvalidTransactionException {
 	    boolean exists = guestHouses.stream()
 	        .anyMatch(g -> g.getName().equals(guestHouseName));
 	    if (!exists) {
 	        throw new InvalidTransactionException("등록되지 않은 지점입니다: " + guestHouseName);
 	    }
-
 	    double totalSales = 0.0;
 	    for (Booking b : bookings) {
-	        // 해당 지점 예약만 계산
 	        if (!b.getGuesthouse().getName().equals(guestHouseName)) {
 	            continue;
 	        }
 	        LocalDate start = b.getStartDate().getDate();
 	        LocalDate end   = b.getEndDate().getDate();
-
-	        // 조회 월 기간에 맞춰 예약 기간을 자름
-	        LocalDate effectiveStart = start.isBefore(monthStart) ? monthStart : start;
-	        LocalDate effectiveEnd   = end.isAfter(monthEnd)   ? monthEnd   : end;
-
+	        LocalDate effectiveStart = start.isBefore(startDate) ? startDate : start;
+	        LocalDate effectiveEnd   = end.isAfter(endDate) ? endDate : end;
 	        if (!effectiveStart.isAfter(effectiveEnd)) {
 	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
 	            totalSales += days * b.getGuesthouse().getPrice();
@@ -596,41 +571,70 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    return totalSales;
 	}
 	
-	private double[] salesForWeekProcess(int year, int month) throws InvalidTransactionException {
-		if (month < 1 || month > 12) {
+	/**
+	 * 특정 게스트하우스의 그 날의 매출을 반환한다.
+	 */
+	@Override
+	public double getSalesForDay(int month, int day, String guestHouseName) throws InvalidTransactionException {
+	    if (month < 1 || month > 12) {
 	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
 	    }
-		
+	    YearMonth ym = YearMonth.of(LocalDate.now().getYear(), month);
+	    if (day < 1 || day > ym.lengthOfMonth()) {
+	        throw new InvalidTransactionException("잘못된 일입니다: " + day);
+	    }
+	    LocalDate targetDate = LocalDate.of(ym.getYear(), month, day);
+	    return salesInRangeProcess(targetDate, targetDate, guestHouseName);
+	}
+	/**
+	 * 특정 게스트하우스의 달 매출을 반환한다.
+	 */
+	@Override
+	public double getSalesForMonth(int month, String guestHouseName) throws InvalidTransactionException {
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+	    int year = LocalDate.now().getYear();
+	    YearMonth ym = YearMonth.of(year, month);
+	    return salesInRangeProcess(ym.atDay(1), ym.atEndOfMonth(), guestHouseName);
+	}
+	/**
+	 * 달에 속한 주 매출을 계산하는 로직
+	 * @param year 연도
+	 * @param month 월
+	 * @return 각 Week의 매출 0~4 (1주차~5주차)
+	 * @throws InvalidTransactionException
+	 */
+	private double[] salesForWeekProcess(int year, int month) throws InvalidTransactionException {
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
 	    LocalDate monthStart = LocalDate.of(year, month, 1);
 	    LocalDate monthEnd   = monthStart.with(TemporalAdjusters.lastDayOfMonth());
-
-	    // 주별 매출 합계: 1주(1~7일), 2주(8~14일), ..., 5주(29~말일)
 	    double[] weekSales = new double[5];
+
 	    for (int i = 0; i < 5; i++) {
 	        LocalDate weekStart = monthStart.plusDays(i * 7L);
 	        if (weekStart.isAfter(monthEnd)) break;
 	        LocalDate weekEnd = weekStart.plusDays(6);
 	        if (weekEnd.isAfter(monthEnd)) weekEnd = monthEnd;
-
 	        for (Booking b : bookings) {
-	            LocalDate start = b.getStartDate().getDate();
-	            LocalDate end   = b.getEndDate().getDate();
-	            if (end.isBefore(weekStart) || start.isAfter(weekEnd)) continue;
-	            LocalDate effectiveStart = start.isBefore(weekStart) ? weekStart : start;
-	            LocalDate effectiveEnd   = end.isAfter(weekEnd)   ? weekEnd   : end;
-	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
-	            weekSales[i] += days * b.getGuesthouse().getPrice();
+	            weekSales[i] += salesCaculator(weekStart, weekEnd, b);
 	        }
 	    }
 	    return weekSales;
 	}
-	// 지정된 월의 주별 매출을 조회한다.
+	/**
+	*	지정된 월의 주별 매출을 조회한다.
+	*/
 	@Override
 	public double getSalesForWeekly(int year, int month, int weekly) throws InvalidTransactionException {
 		double[] weekSales = salesForWeekProcess(year, month);
 		return weekSales[weekly - 1];
 	}
-	
+	/**
+	 * 그 달의 가장 높은 매출을 기록한 주를 반환한다.
+	 */
 	@Override
 	public int getPeakSeason(int month) throws InvalidTransactionException{
 		if (month < 1 || month > 12) {
@@ -651,6 +655,23 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    return peakWeek;
 	}
 	
-	
-
+	/**
+	 * 특정 게스트하우스의 특정 주차의 매출을 반환한다.
+	 */
+	@Override
+	public double getSalesForWeekly(int month, int weekly, String guestHouseName) throws InvalidTransactionException {
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+	    if (weekly < 1 || weekly > 5) {
+	        throw new InvalidTransactionException("잘못된 주차입니다: " + weekly);
+	    }
+	    LocalDate monthStart = LocalDate.of(LocalDate.now().getYear(), month, 1);
+	    LocalDate monthEnd = monthStart.with(TemporalAdjusters.lastDayOfMonth());
+	    LocalDate weekStart = monthStart.plusDays((weekly - 1) * 7L);
+	    if (weekStart.isAfter(monthEnd)) return 0.0;
+	    LocalDate weekEnd = weekStart.plusDays(6);
+	    if (weekEnd.isAfter(monthEnd)) weekEnd = monthEnd;
+	    return salesInRangeProcess(weekStart, weekEnd, guestHouseName);
+	}
 }
