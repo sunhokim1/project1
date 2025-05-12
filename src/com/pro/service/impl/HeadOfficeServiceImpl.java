@@ -475,11 +475,63 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	
+	private int[] divisionSeason(LocalDate startDate, LocalDate endDate) {
+		int[] divisionWeek = new int[4];
+		divisionWeek[0] = endDate.getDayOfMonth() - startDate.getDayOfMonth() + 1;
+		divisionWeek[1] = 0;
+		divisionWeek[2] = (startDate.getDayOfMonth() / 7);
+		divisionWeek[3] = divisionWeek[2] + 1;
+		if (startDate.getDayOfMonth() <= 7 && endDate.getDayOfMonth() > 7) {
+			divisionWeek[0] = 8 - startDate.getDayOfMonth();
+			divisionWeek[1] = endDate.getDayOfMonth() - 7;
+		}else if (startDate.getDayOfMonth() <= 14 && endDate.getDayOfMonth() > 14) {
+			divisionWeek[0] = 15 - startDate.getDayOfMonth();
+			divisionWeek[1] = endDate.getDayOfMonth() - 14;
+		}else if (startDate.getDayOfMonth() <= 21 && endDate.getDayOfMonth() > 21) {
+			divisionWeek[0] = 22 - startDate.getDayOfMonth();
+			divisionWeek[1] = endDate.getDayOfMonth() - 21;
+		}else if (startDate.getDayOfMonth() <= 28 && endDate.getDayOfMonth() > 28) {
+			divisionWeek[0] = 29 - startDate.getDayOfMonth();
+			divisionWeek[1] = endDate.getDayOfMonth() - 28;
+		}else if (startDate.getDayOfMonth() <= 31 && endDate.getDayOfMonth() < 7) {
+			divisionWeek[0] = 32 - startDate.getDayOfMonth();
+			divisionWeek[1] = 7 - endDate.getDayOfMonth();
+		}
+		return divisionWeek;
+	}
+	
 	@Override
 	public int getPeakSeason(int month) {//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
+		int peakSeason[] = new int[5];
+		int divisionWeak[] = new int[4];
+		int maximum = -1;
+		int maximumWeak = -1;
+		int prevMonth = month - 1;
+		int nextMonth = month + 1;
+		
+		if (prevMonth == 0) prevMonth = 12;
+		if (nextMonth == 13) nextMonth = 1;
+		for (Booking b : bookings) {
+			if (b.getStartDate().getDate().getMonthValue() == month) {
+				divisionWeak = divisionSeason(b.getStartDate().getDate(), b.getEndDate().getDate());
+				peakSeason[divisionWeak[2]] += b.getGuesthouse().getPrice() * divisionWeak[0];
+				if (divisionWeak[1] != 0 && (b.getEndDate().getDate().getMonthValue() != nextMonth))
+					peakSeason[divisionWeak[3]] += b.getGuesthouse().getPrice() * divisionWeak[1];
+			}else if (b.getStartDate().getDate().getMonthValue() == prevMonth) {
+				if (b.getEndDate().getDate().getMonthValue() == month) {
+					divisionWeak = divisionSeason(b.getStartDate().getDate(), b.getEndDate().getDate());
+					peakSeason[0] += b.getGuesthouse().getPrice() * divisionWeak[1];
+				}
+			}
+		}
+		for (int i = 0;i<peakSeason.length;i++) {
+			if (maximum < peakSeason[i]) {
+				maximum = peakSeason[i];
+				maximumWeak = i;
+			}
+		}
+		return maximumWeak + 1;
 	}
 	
 
