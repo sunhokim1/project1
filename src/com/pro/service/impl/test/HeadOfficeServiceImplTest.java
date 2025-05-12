@@ -9,11 +9,17 @@ import com.pro.vo.child.Employee;
 import com.pro.vo.child.Guest;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
 
 public class HeadOfficeServiceImplTest {
     public static void main(String[] args) {
@@ -150,12 +156,12 @@ public class HeadOfficeServiceImplTest {
                         System.out.println("⚠ 잘못된 입력입니다. 다시 선택하세요.");
                 }
         	}
-        	
         } else if(select == 2) {
         	while(tmp != 6) {
 		    	System.out.println("=====관리자용=======");
-		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 종료");System.out.print("선택 >> ");
-        		tmp = sc.nextInt();  // 사용자 입력 받기
+
+		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 뒤로가기");System.out.print("선택 >> ");
+        		tmp = sc.nextInt(); 
 
                 switch (tmp) {
                     case 1:
@@ -241,14 +247,51 @@ public class HeadOfficeServiceImplTest {
                         System.out.println("⚠ 잘못된 입력입니다. 다시 선택하세요.");
                 }
         	}
-        	sc.close();
-        	return;
+
         }
         
         sc.close();
-
-
         
+
+        Guest guest = null;
+
+	    HashMap<String,Double> fileWr= new HashMap<>(); // 필드 초기화
+
+	    for (User user : service.searchAllUsers()) {
+	    	if(user instanceof Guest) {
+	        	fileWr.put(user.getId(), 0.0);
+	    	}
+	    }
+	    
+	    for(Booking booking : service.getBooks()) {
+	    	String userId = booking.getGuest().getId();
+	    	Double price = fileWr.getOrDefault(userId, 0.0);
+	    	long daysBetween = ChronoUnit.DAYS.between(booking.getStartDate().getDate(), booking.getEndDate().getDate());
+	    	Double extraPrice = daysBetween * booking.getGuesthouse().getPrice();
+	    	fileWr.put(userId, price + extraPrice);
+
+	    }
+	    
+	    try (BufferedWriter writer = new BufferedWriter(new FileWriter("sales_output.txt"))) {
+	        for (Map.Entry<String, Double> entry : fileWr.entrySet()) {
+	            String id = entry.getKey();
+	            double total = entry.getValue();
+	            
+	            // 사용자 이름 가져오기
+	            User user = service.searchUser(id);
+	            String name = (user != null) ? user.getName() : "이름없음";
+
+	            writer.write(name + " (" + id + ") : " +" $" +total);
+	            writer.newLine();  // 줄 바꿈
+	        }
+	        System.out.println("✅ 파일 저장 완료: sales_output.txt");
+	    } catch (IOException e) {
+	        System.out.println("❌ 파일 저장 중 오류 발생: " + e.getMessage());
+	    }
+	    
+	    saveRoomStatusPerDay(service);
+	    
+	         
         // 예약 현황 출력
         // printBookings("[예약 현황 확인]", service);
 
@@ -259,6 +302,49 @@ public class HeadOfficeServiceImplTest {
         // System.out.println("[만실 확인] " + date2 + ": " + service.isroomFull(date2));
     }
 
+    private static void saveRoomStatusPerDay(HeadOfficeServiceImpl service) {
+        LocalDate start = LocalDate.of(2025, 3, 1);
+        LocalDate end = LocalDate.of(2025, 4, 30);  // 원하는 범위 설정
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("room_status_output.txt"))) {
+            while (!start.isAfter(end)) {
+                for (GuestHouse gh : service.searchAllGuestHouse()) {
+                    // 초기화
+                    HashMap<String, Integer> roomStatus = new HashMap<>();
+                    for (String room : gh.getRooms().keySet()) {
+                        roomStatus.put(room, 0);
+                    }
+                    // 현재 날짜의 예약 체크
+                    for (Booking b : service.getBooks()) {
+                        if (!b.getGuesthouse().getName().equals(gh.getName())) continue;
+                        if ((b.getStartDate().getDate().isBefore(start) || b.getStartDate().getDate().isEqual(start)) &&
+                            (b.getEndDate().getDate().isAfter(start) || b.getEndDate().getDate().isEqual(start))) {
+                            String room = b.getRoomNumber();
+                            roomStatus.put(room, roomStatus.getOrDefault(room, 0) + 1);
+                        }
+                    }
+                    // 출력 포맷 작성
+                    StringBuilder line = new StringBuilder();
+                    line.append(start.toString()).append(" \"").append(gh.getName()).append("\" | ");
+                    for (Map.Entry<String, Integer> entry : roomStatus.entrySet()) {
+                        int booked = entry.getValue();
+                        int total = gh.getRooms().get(entry.getKey());
+                        line.append("\"").append(entry.getKey()).append("\" : ")
+                            .append(booked).append("/").append(total).append(", ");
+                    }
+                    // 마지막 쉼표 제거 및 줄바꿈
+                    if (line.lastIndexOf(", ") == line.length() - 2) {
+                        line.setLength(line.length() - 2);
+                    }
+                    writer.write(line.toString());
+                    writer.newLine();
+                }
+                start = start.plusDays(1);
+            }
+            System.out.println("✅ 예약 현황 파일 저장 완료: room_status_output.txt");
+        } catch (IOException e) {
+            System.out.println("❌ 파일 저장 중 오류 발생: " + e.getMessage());
+        }
+    }
     // 방 번호와 수용 인원 정보를 담는 맵을 생성하는 유틸리티 함수
     private static HashMap<String, Integer> createRoomMap(String[] rooms, int[] capacity) {
         HashMap<String, Integer> map = new HashMap<>();
@@ -268,12 +354,7 @@ public class HeadOfficeServiceImplTest {
         return map;
     }
 
-    private static void printBookings(String title, HeadOfficeServiceImpl service)  {
-        System.out.println("\n" + title);
-        for (Booking b : service.getBooks()) {
-            System.out.println(b);
-        }
-    }
+
     private static void salesInformaion(HeadOfficeServiceImpl service)  {
     	Scanner scanner = new Scanner(System.in);
     	int tmp02 = -1;
