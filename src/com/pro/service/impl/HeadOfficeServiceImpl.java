@@ -666,6 +666,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 
 	    return peakWeek;
 	}
+	// 지정된 월의 주별 매출을 조회한다.
 	@Override
 	public double getSalesForWeekly(int month, int weekly) throws InvalidTransactionException {
 		// TODO Auto-generated method stub
