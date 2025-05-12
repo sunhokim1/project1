@@ -1,11 +1,14 @@
 package com.pro.service.impl;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import com.pro.exception.DuplicateException;
+import com.pro.exception.InvalidTransactionException;
 import com.pro.exception.RecordNotFoundException;
 import com.pro.service.HeadOfficeService;
 import com.pro.vo.Booking;
@@ -503,35 +506,48 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	
 	@Override
 	public int getPeakSeason(int month) {//InvalidTransactionException
-		int peakSeason[] = new int[5];
-		int divisionWeak[] = new int[4];
-		int maximum = -1;
-		int maximumWeak = -1;
-		int prevMonth = month - 1;
-		int nextMonth = month + 1;
-		
-		if (prevMonth == 0) prevMonth = 12;
-		if (nextMonth == 13) nextMonth = 1;
-		for (Booking b : bookings) {
-			if (b.getStartDate().getDate().getMonthValue() == month) {
-				divisionWeak = divisionSeason(b.getStartDate().getDate(), b.getEndDate().getDate());
-				peakSeason[divisionWeak[2]] += b.getGuesthouse().getPrice() * divisionWeak[0];
-				if (divisionWeak[1] != 0 && (b.getEndDate().getDate().getMonthValue() != nextMonth))
-					peakSeason[divisionWeak[3]] += b.getGuesthouse().getPrice() * divisionWeak[1];
-			}else if (b.getStartDate().getDate().getMonthValue() == prevMonth) {
-				if (b.getEndDate().getDate().getMonthValue() == month) {
-					divisionWeak = divisionSeason(b.getStartDate().getDate(), b.getEndDate().getDate());
-					peakSeason[0] += b.getGuesthouse().getPrice() * divisionWeak[1];
-				}
-			}
-		}
-		for (int i = 0;i<peakSeason.length;i++) {
-			if (maximum < peakSeason[i]) {
-				maximum = peakSeason[i];
-				maximumWeak = i;
-			}
-		}
-		return maximumWeak + 1;
+		if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+
+	    int year = LocalDate.now().getYear();
+	    LocalDate monthStart = LocalDate.of(year, month, 1);
+	    LocalDate monthEnd   = monthStart.with(TemporalAdjusters.lastDayOfMonth());
+
+	    // 주별 매출 합계: 1주(1~7일), 2주(8~14일), ..., 5주(29~말일)
+	    double[] weekSales = new double[5];
+	    for (int i = 0; i < 5; i++) {
+	        LocalDate weekStart = monthStart.plusDays(i * 7L);
+	        if (weekStart.isAfter(monthEnd)) break;
+	        LocalDate weekEnd = weekStart.plusDays(6);
+	        if (weekEnd.isAfter(monthEnd)) weekEnd = monthEnd;
+
+	        for (Booking b : bookings) {
+	            LocalDate start = b.getStartDate().getDate();
+	            LocalDate end   = b.getEndDate().getDate();
+	            // 겹치지 않으면 건너뛰기
+	            if (end.isBefore(weekStart) || start.isAfter(weekEnd)) continue;
+
+	            // 겹치는 날짜 계산
+	            LocalDate effectiveStart = start.isBefore(weekStart) ? weekStart : start;
+	            LocalDate effectiveEnd   = end.isAfter(weekEnd)   ? weekEnd   : end;
+	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
+
+	            weekSales[i] += days * b.getGuesthouse().getPrice();
+	        }
+	    }
+
+	    // 최대 매출을 기록한 주 찾기 (1-based)
+	    int peakWeek = 1;
+	    double maxSales = weekSales[0];
+	    for (int i = 1; i < weekSales.length; i++) {
+	        if (weekSales[i] > maxSales) {
+	            maxSales = weekSales[i];
+	            peakWeek = i + 1;
+	        }
+	    }
+
+	    return peakWeek;
 	}
 	
 
