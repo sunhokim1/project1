@@ -264,7 +264,7 @@ public class HeadOfficeServiceImplTest {
     	int tmp02 = -1;
     	while(tmp02 != 7) {
     		System.out.println("메뉴를 선택 하세요");
-    		System.out.println("1. 전체 일간 매출 || 2. 전체 주간 매출 || 3. 전체 월간 매출 || 4. 한 게스트하우스에 대한 일간 매출 || 5. 한 게스트하우스에 대한 주간 매출 || 6. 한 게스트하우스에 대한 월간 매출 || 7. 종료");
+    		System.out.println("1. 전체 일간 매출 || 2. 전체 주간 매출 || 3. 전체 월간 매출 || 4. 한 게스트하우스에 대한 일간 매출 || 5. 한 게스트하우스에 대한 주간 매출 || 6. 한 게스트하우스에 대한 월간 매출 || 7. 주간 매출 랭킹 || 8. 종료");
     		System.out.print("선택 >> ");
     		tmp02 = scanner.nextInt();
     		
