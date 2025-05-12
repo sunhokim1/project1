@@ -678,4 +678,9 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    if (weekEnd.isAfter(monthEnd)) weekEnd = monthEnd;
 	    return salesInRangeProcess(weekStart, weekEnd, guestHouseName);
 	}
+	
+	public double[] getSalesRankingForWeekly(int month) throws InvalidTransactionException {
+		int year = LocalDate.now().getYear();
+		return salesForWeekProcess(year, month);
+	}
 }

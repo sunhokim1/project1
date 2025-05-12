@@ -4,14 +4,13 @@ import java.util.Scanner;
 
 import com.pro.exception.InvalidTransactionException;
 import com.pro.service.impl.HeadOfficeServiceImpl;
-import com.pro.service.impl.HeadOfficeServiceImpl.GuestNameComparator;
 import com.pro.vo.*;
 import com.pro.vo.child.Employee;
 import com.pro.vo.child.Guest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,13 +23,12 @@ public class HeadOfficeServiceImplTest {
         System.out.println("========================================");
         System.out.println("메뉴를 선택하세요.");
         System.out.println(" 1. 게스트용  ||  2. 관리자용");
-        System.out.print("선택 ▶ ");
         int tmp = -1;
         int select = sc.nextInt();
         if(select == 1) {
         	while(tmp != 5) {
         		System.out.println(" 1. 회원 등록 || 2. 게스트하우스 예약 || 3. 예약 확인 || 4. 예약 변경 || 5. 종료" );
-        		System.out.print("선택 ▶ ");
+        		System.out.print("선택 >> ");
         		tmp = sc.nextInt();  // 사용자 입력 받기
 
                 switch (tmp) {
@@ -46,7 +44,6 @@ public class HeadOfficeServiceImplTest {
                         String nationaity = sc.nextLine();
                         try {
                         	service.addUser(new Guest(id, name, phone, nationaity));
-                        	System.out.println(name+" 님이 등록되었습니다. ");
                         } catch (Exception e) {
                             System.out.println("회원을 등록 할 수 없습니다.\n " + e.getMessage());
                         }
@@ -90,7 +87,6 @@ public class HeadOfficeServiceImplTest {
                         Booking newBooking = new Booking((Guest)client, guesthouse, rName , new BookingDate(sdate),
                 				new BookingDate(edate));
                 		service.addBook(newBooking);
-                		System.out.println("예약이 성공적으로 완료되었습니다.");
                         
                         
                         break;
@@ -157,8 +153,7 @@ public class HeadOfficeServiceImplTest {
         } else if(select == 2) {
         	while(tmp != 6) {
 		    	System.out.println("=====관리자용=======");
-		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 뒤로가기");
-		    	System.out.print("선택 ▶ ");
+		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 뒤로가기");System.out.print("선택 >> ");
         		tmp = sc.nextInt();  // 사용자 입력 받기
 
                 switch (tmp) {
@@ -177,7 +172,6 @@ public class HeadOfficeServiceImplTest {
                         
                         try {
                         	service.addUser(new Employee(id, name, phone, dept,salary,0.0));
-                        	System.out.println(name+" 님이 등록되었습니다. ");
                         } catch (Exception e) {
                             System.out.println("직원을 등록 할 수 없습니다.\n " + e.getMessage());
                         }
@@ -204,7 +198,6 @@ public class HeadOfficeServiceImplTest {
                     			String roomNumber = sc.next();
 		                    	int capacity = sc.nextInt();
 		                    	roomMap.put(roomNumber, capacity);
-		                    	System.out.println(gName01+" 지점이 등록되었습니다. ");
 		                    } else if(rSelect == 2) {
 		                    	System.out.println("종영합니다.");
 		                    }
@@ -218,21 +211,7 @@ public class HeadOfficeServiceImplTest {
 	                    
 	                    break;
                     case 3:
-                    	System.out.print("▶ Guest 이름 순 정렬 ");
-                    	List<User> users = service.searchAllUsers();
-                    	List<Guest> guests = new ArrayList<Guest>();
-                    	for(User u:users) {
-                    		if(u instanceof Guest) {
-                    			guests.add((Guest) u);
-                    		}
-                    	}
 
-                        Collections.sort(guests,new HeadOfficeServiceImpl.GuestNameComparator());
-
-                        // 결과 출력
-                        for (Guest g : guests) {
-                            System.out.printf(" Name: %s%n,ID: %s",  g.getName(),g.getId());
-                        }
                         break;
                     case 4:
                     	salesInformaion(service);
@@ -303,9 +282,19 @@ public class HeadOfficeServiceImplTest {
 	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
 	    		}
 	    		break;
-	   
 			case 2:
-				
+				System.out.println("주간 매출을 받고 싶은 날짜를 입력하세요");
+				System.out.println("몇 년입니까?");
+				int year01 = scanner.nextInt();
+				System.out.println("몇 월입니까?");
+				int month01 = scanner.nextInt();
+				System.out.println("몇 주차 입니까?");
+				int week01 = scanner.nextInt();
+				try {
+					System.out.println(service.getSalesForWeekly(year01, month01, week01));
+				}catch (InvalidTransactionException e){
+					System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+				}
 				break;
 			case 3:
 				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
@@ -332,7 +321,18 @@ public class HeadOfficeServiceImplTest {
 	    		}
 				break;
 			case 5:
-				
+				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
+				String guestHouse05 = scanner.nextLine();
+				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
+				System.out.println("몇 월입니까?");
+	    		int month05 = scanner.nextInt();
+	    		System.out.println("몇 주차입니까?");
+	    		int week05 = scanner.nextInt();
+	    		try {
+	    			System.out.println(service.getSalesForWeekly(month05, week05, guestHouse05));
+	    		} catch(InvalidTransactionException e) {
+	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+	    		}
 				break;
 			case 6:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
@@ -345,7 +345,25 @@ public class HeadOfficeServiceImplTest {
 	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
 	    		}
 				break;
-			case 7:
+			case 7 :
+				System.out.println("어떤 월의 주간 매출 랭킹을 가져오시겠습니까?");
+				int month07 = scanner.nextInt();
+				List<WeekSalesRanking> weekSalesRanking = new ArrayList<WeekSalesRanking>();
+				try {
+					double[] weekSales = service.getSalesRankingForWeekly(month07);
+					int idx = 0;
+					for (double d : weekSales) {
+						weekSalesRanking.add(new WeekSalesRanking(idx++, d));
+					}
+					weekSalesRanking.sort(Comparator.comparingDouble(ws -> -ws.sales));
+					System.out.println();
+					for (WeekSalesRanking ws : weekSalesRanking) {
+						System.out.println(ws);
+					}
+				} catch(InvalidTransactionException e) {
+					System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+				}
+			case 8:
 	
 				System.out.println("▶ 종료합니다.");
 				break;
@@ -1080,4 +1098,19 @@ public class HeadOfficeServiceImplTest {
     
     }
 		
+}
+
+class WeekSalesRanking {
+	int week;
+	double sales;
+	
+	public WeekSalesRanking(int week, double sales) {
+		this.week = week;
+		this.sales = sales;
+	}
+	@Override
+    public String toString() {
+        return week + 1 + "주차: " + sales + "입니다.";
+    }
+	
 }
