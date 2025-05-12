@@ -5,6 +5,7 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,7 +72,13 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	public static HeadOfficeServiceImpl getInstance() {
 		return SERVICE;
 	}
-	
+	//Guest 이름을 기준으로 정렬 
+	public static class GuestNameComparator implements Comparator<Guest> {
+        @Override
+        public int compare(Guest g1, Guest g2) {
+            return g1.getName().compareTo(g2.getName());
+        }
+    }
 	/**
 	 * GuestHouse클래스를 guestHouses ArrayList에 추가한다.
 	 */
@@ -96,7 +103,6 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			}
 		}
 		users.add(user);
-		System.out.println(user.getName() + "님이 등록되셨습니다.");
 	}
 	/**
 	 * name을 가진 GuestHouse 클래스를 guestHouses ArrayList에서 삭제한다.
@@ -193,7 +199,6 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 				return temp;
 			}
 		}
-		System.out.println("등록되지 않은 게스트하우스입니다.");
 		return temp;
 	}
 	/**
@@ -327,7 +332,6 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	        isbn++;
 	        booking.setIsbn(isbn);
 	        bookings.add(booking);
-	        System.out.println("예약이 성공적으로 완료되었습니다.");
 	    } else {
 	        System.out.println("예약이 실패했습니다. 해당 날짜에 방이 가득 찼습니다.");
 	    }
@@ -673,5 +677,10 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    LocalDate weekEnd = weekStart.plusDays(6);
 	    if (weekEnd.isAfter(monthEnd)) weekEnd = monthEnd;
 	    return salesInRangeProcess(weekStart, weekEnd, guestHouseName);
+	}
+	
+	public double[] getSalesRankingForWeekly(int month) throws InvalidTransactionException {
+		int year = LocalDate.now().getYear();
+		return salesForWeekProcess(year, month);
 	}
 }

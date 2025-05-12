@@ -9,7 +9,10 @@ import com.pro.vo.child.Employee;
 import com.pro.vo.child.Guest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class HeadOfficeServiceImplTest {
     public static void main(String[] args) {
@@ -279,9 +282,19 @@ public class HeadOfficeServiceImplTest {
 	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
 	    		}
 	    		break;
-	   
 			case 2:
-				
+				System.out.println("주간 매출을 받고 싶은 날짜를 입력하세요");
+				System.out.println("몇 년입니까?");
+				int year01 = scanner.nextInt();
+				System.out.println("몇 월입니까?");
+				int month01 = scanner.nextInt();
+				System.out.println("몇 주차 입니까?");
+				int week01 = scanner.nextInt();
+				try {
+					System.out.println(service.getSalesForWeekly(year01, month01, week01));
+				}catch (InvalidTransactionException e){
+					System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+				}
 				break;
 			case 3:
 				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
@@ -308,7 +321,18 @@ public class HeadOfficeServiceImplTest {
 	    		}
 				break;
 			case 5:
-				
+				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
+				String guestHouse05 = scanner.nextLine();
+				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
+				System.out.println("몇 월입니까?");
+	    		int month05 = scanner.nextInt();
+	    		System.out.println("몇 주차입니까?");
+	    		int week05 = scanner.nextInt();
+	    		try {
+	    			System.out.println(service.getSalesForWeekly(month05, week05, guestHouse05));
+	    		} catch(InvalidTransactionException e) {
+	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+	    		}
 				break;
 			case 6:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
@@ -321,7 +345,25 @@ public class HeadOfficeServiceImplTest {
 	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
 	    		}
 				break;
-			case 7:
+			case 7 :
+				System.out.println("어떤 월의 주간 매출 랭킹을 가져오시겠습니까?");
+				int month07 = scanner.nextInt();
+				List<WeekSalesRanking> weekSalesRanking = new ArrayList<WeekSalesRanking>();
+				try {
+					double[] weekSales = service.getSalesRankingForWeekly(month07);
+					int idx = 0;
+					for (double d : weekSales) {
+						weekSalesRanking.add(new WeekSalesRanking(idx++, d));
+					}
+					weekSalesRanking.sort(Comparator.comparingDouble(ws -> -ws.sales));
+					System.out.println();
+					for (WeekSalesRanking ws : weekSalesRanking) {
+						System.out.println(ws);
+					}
+				} catch(InvalidTransactionException e) {
+					System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
+				}
+			case 8:
 	
 				System.out.println("▶ 종료합니다.");
 				break;
@@ -1056,4 +1098,19 @@ public class HeadOfficeServiceImplTest {
     
     }
 		
+}
+
+class WeekSalesRanking {
+	int week;
+	double sales;
+	
+	public WeekSalesRanking(int week, double sales) {
+		this.week = week;
+		this.sales = sales;
+	}
+	@Override
+    public String toString() {
+        return week + 1 + "주차: " + sales + "입니다.";
+    }
+	
 }
