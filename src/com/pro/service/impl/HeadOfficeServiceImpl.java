@@ -1,6 +1,7 @@
 package com.pro.service.impl;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
@@ -446,37 +447,144 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 
 	@Override
-	public double getSalesForDay(int month, int day) {
+	public double getSalesForDay(int month, int day) throws InvalidTransactionException{
+		// 월 유효성 검사
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+	    // 해당 월의 마지막 일을 구해 일 유효성 검사
+	    YearMonth ym = YearMonth.of(LocalDate.now().getYear(), month);
+	    if (day < 1 || day > ym.lengthOfMonth()) {
+	        throw new InvalidTransactionException("잘못된 일입니다: " + day);
+	    }
+
+	    LocalDate targetDate = LocalDate.of(ym.getYear(), month, day);
+	    double total = 0.0;
+
+	    for (Booking b : bookings) {
+	        LocalDate start = b.getStartDate().getDate();
+	        LocalDate end   = b.getEndDate().getDate();
+	        if (!targetDate.isBefore(start) && !targetDate.isAfter(end)) {
+	            total += b.getGuesthouse().getPrice();
+	        }
+	    }
+
+	    return total;
+	}
+	@Override
+	public double getSalesForWeekly(int month, int weekly) throws InvalidTransactionException{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	@Override
-	public double getSalesForWeekly(int month, int weekly) {
-		// TODO Auto-generated method stub
-		return 0;
+	public double getSalesForMonth(int month) throws InvalidTransactionException{
+		 // 월 유효성 검사
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+
+	    int year = LocalDate.now().getYear();
+	    YearMonth ym = YearMonth.of(year, month);
+	    LocalDate monthStart = ym.atDay(1);
+	    LocalDate monthEnd   = ym.atEndOfMonth();
+
+	    double totalSales = 0.0;
+
+	    for (Booking b : bookings) {
+	        LocalDate start = b.getStartDate().getDate();
+	        LocalDate end   = b.getEndDate().getDate();
+
+	        // 예약 기간을 대상 월 기간에 맞춰 잘라냄
+	        LocalDate effectiveStart = start.isBefore(monthStart) ? monthStart : start;
+	        LocalDate effectiveEnd   = end.isAfter(monthEnd)   ? monthEnd   : end;
+
+	        // 잘라낸 기간이 유효한지 확인
+	        if (!effectiveStart.isAfter(effectiveEnd)) {
+	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
+	            totalSales += days * b.getGuesthouse().getPrice();
+	        }
+	    }
+
+	    return totalSales;
 	}
+
 	@Override
-	public double getSalesForMonth(int month) {
+	public double getSalesForDay(int month, int day, String guestHouseName) throws InvalidTransactionException{//InvalidTransactionException
+		// 월 유효성 검사
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+	    // 일 유효성 검사
+	    YearMonth ym = YearMonth.of(LocalDate.now().getYear(), month);
+	    if (day < 1 || day > ym.lengthOfMonth()) {
+	        throw new InvalidTransactionException("잘못된 일입니다: " + day);
+	    }
+	    // 지점 존재 여부 검사
+	    boolean exists = guestHouses.stream()
+	        .anyMatch(g -> g.getName().equals(guestHouseName));
+	    if (!exists) {
+	        throw new InvalidTransactionException("등록되지 않은 지점입니다: " + guestHouseName);
+	    }
+
+	    LocalDate targetDate = LocalDate.of(ym.getYear(), month, day);
+	    double total = 0.0;
+
+	    for (Booking b : bookings) {
+	        if (!b.getGuesthouse().getName().equals(guestHouseName)) {
+	            continue;
+	        }
+	        LocalDate start = b.getStartDate().getDate();
+	        LocalDate end   = b.getEndDate().getDate();
+	        if (!targetDate.isBefore(start) && !targetDate.isAfter(end)) {
+	            total += b.getGuesthouse().getPrice();
+	        }
+	    }
+	    return total;
+	}
+
+	@Override
+	public double getSalesForQuarter(int month, int weekly, String guestHouseName) throws InvalidTransactionException{//InvalidTransactionException
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public double getSalesForMonth(int month, int day, String guestHouseName) {//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public double getSalesForMonth(int month, String guestHouseName) throws InvalidTransactionException{//InvalidTransactionException
+		// 현재 연도를 기준으로 조회할 월의 시작·끝일을 계산
+	    int year = LocalDate.now().getYear();
+	    LocalDate monthStart = LocalDate.of(year, month, 1);
+	    LocalDate monthEnd   = monthStart.with(TemporalAdjusters.lastDayOfMonth());
+       
+	    //월 유효성 검사
+	    if (month < 1 || month > 12) {
+	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
+	    }
+	    // 지점 유효성 검사
+	    boolean exists = guestHouses.stream()
+	        .anyMatch(g -> g.getName().equals(guestHouseName));
+	    if (!exists) {
+	        throw new InvalidTransactionException("등록되지 않은 지점입니다: " + guestHouseName);
+	    }
 
-	@Override
-	public double getSalesForQuarter(int month, int weekly, String guestHouseName) {//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	    double totalSales = 0.0;
+	    for (Booking b : bookings) {
+	        // 해당 지점 예약만 계산
+	        if (!b.getGuesthouse().getName().equals(guestHouseName)) {
+	            continue;
+	        }
+	        LocalDate start = b.getStartDate().getDate();
+	        LocalDate end   = b.getEndDate().getDate();
 
-	@Override
-	public double getSalesForYear(int month, String guestHouseName) {//InvalidTransactionException
-		// TODO Auto-generated method stub
-		return 0;
+	        // 조회 월 기간에 맞춰 예약 기간을 자름
+	        LocalDate effectiveStart = start.isBefore(monthStart) ? monthStart : start;
+	        LocalDate effectiveEnd   = end.isAfter(monthEnd)   ? monthEnd   : end;
+
+	        if (!effectiveStart.isAfter(effectiveEnd)) {
+	            long days = ChronoUnit.DAYS.between(effectiveStart, effectiveEnd) + 1;
+	            totalSales += days * b.getGuesthouse().getPrice();
+	        }
+	    }
+	    return totalSales;
 	}
 	
 	private int[] divisionSeason(LocalDate startDate, LocalDate endDate) {
@@ -505,7 +613,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 	
 	@Override
-	public int getPeakSeason(int month) {//InvalidTransactionException
+	public int getPeakSeason(int month) throws InvalidTransactionException{//InvalidTransactionException
 		if (month < 1 || month > 12) {
 	        throw new InvalidTransactionException("잘못된 월입니다: " + month);
 	    }
