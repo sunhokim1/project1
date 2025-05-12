@@ -35,13 +35,13 @@ public class HeadOfficeServiceImplTest {
                     case 1:
                         System.out.println("▶ 회원 등록 기능 실행");
                         System.out.println("생성할 회원 ID : ");
-                        String id = sc.nextLine();
+                        String id = sc.next();
                         System.out.println("생성할 회원 이름 : ");
-                        String name = sc.nextLine();
+                        String name = sc.next();
                         System.out.println("회원 핸드폰 번호 :");
-                        String phone = sc.nextLine();
+                        String phone = sc.next();
                         System.out.println("회원의 국적 : ");
-                        String nationaity = sc.nextLine();
+                        String nationaity = sc.next();
                         try {
                         	service.addUser(new Guest(id, name, phone, nationaity));
                         } catch (Exception e) {
@@ -54,15 +54,15 @@ public class HeadOfficeServiceImplTest {
                         	System.out.println(g);
                         }
                         System.out.println("회원의 아이디를 입력하세요 : ");
-                        String findId = sc.nextLine();
+                        String findId = sc.next();
                         User client = (Guest)service.searchUser(findId);
                         System.out.println("게스트하우스 명을 입력하세요 : ");
-                        String gName = sc.nextLine();
+                        String gName = sc.next();
                         GuestHouse guesthouse = service.searchGuestHouse(gName);
                         System.out.println("예약하고 싶은 방 이름을 입력하세요 : ");
-                        String rName = sc.nextLine();
+                        String rName = sc.next();
                         System.out.println("게스트하우스 체크인 날짜를 입력하세요 : ");
-                        String startdate = sc.nextLine();
+                        String startdate = sc.next();
                         
                         LocalDate sdate = null;
 
@@ -74,7 +74,7 @@ public class HeadOfficeServiceImplTest {
                         }
                         
                         System.out.println("게스트하우스 체크아웃 날짜를 입력하세요 : ");
-                        String enddate = sc.nextLine();
+                        String enddate = sc.next();
 
                         LocalDate edate = null;
                         try {
@@ -93,7 +93,7 @@ public class HeadOfficeServiceImplTest {
                     case 3:
                         // 예약 확인 로직
                         System.out.println("회원 아이디를 입력해주세요 : ");
-                        String guestId = sc.nextLine();
+                        String guestId = sc.next();
                         for(Booking b : service.getBooks(guestId))
                         {
                         	System.out.println(b);
@@ -103,7 +103,7 @@ public class HeadOfficeServiceImplTest {
                     case 4:
                         // 예약 변경 로직
                         System.out.println("회원 아이디를 입력해주세요 : ");
-                        String guestIdd = sc.nextLine();
+                        String guestIdd = sc.next();
                         for(Booking b : service.getBooks(guestIdd))
                         {
                         	System.out.println(b);
@@ -113,7 +113,7 @@ public class HeadOfficeServiceImplTest {
                         // update는 체크인날짜,체크아웃날짜만 바뀐다.
                         System.out.println("언제로 변경하시겠습니까?");
                         System.out.println("게스트하우스 체크인 날짜를 입력하세요 : ");
-                        String startdate02 = sc.nextLine();
+                        String startdate02 = sc.next();
                         
                         LocalDate sdate02 = null;
 
@@ -125,7 +125,7 @@ public class HeadOfficeServiceImplTest {
                         }
                         
                         System.out.println("게스트하우스 체크아웃 날짜를 입력하세요 : ");
-                        String enddate02 = sc.nextLine();
+                        String enddate02 = sc.next();
 
                         LocalDate edate02 = null;
                         try {
@@ -160,13 +160,13 @@ public class HeadOfficeServiceImplTest {
                     case 1:
                     	System.out.println("▶ 회원 등록 기능 실행");
                         System.out.println("생성할 회원 ID : ");
-                        String id = sc.nextLine();
+                        String id = sc.next();
                         System.out.println("생성할 회원 이름 : ");
-                        String name = sc.nextLine();
+                        String name = sc.next();
                         System.out.println("회원 핸드폰 번호 :");
-                        String phone = sc.nextLine();
+                        String phone = sc.next();
                         System.out.println("회원의 부서 명 : ");
-                        String dept = sc.nextLine();
+                        String dept = sc.next();
                         System.out.println("회원의 월급은 : ");
                         Double salary = sc.nextDouble();
                         
@@ -179,11 +179,11 @@ public class HeadOfficeServiceImplTest {
                     case 2:
                     	System.out.println("▶ 게스트하우스 등록 기능 실행");
                     	System.out.println("게스트하우스 이름은?");
-                    	String gName01 = sc.nextLine();
+                    	String gName01 = sc.next();
                     	System.out.println("게스트하우스 장소는?");
-                    	String gAddr01 = sc.nextLine();
+                    	String gAddr01 = sc.next();
                     	System.out.println("게스트하우스 주위 핫플레이스는?");
-                    	String hotPlace = sc.nextLine();
+                    	String hotPlace = sc.next();
                     	System.out.println("게스트하우스 가격은?");
                     	Double price = sc.nextDouble();
                     	
@@ -308,21 +308,21 @@ public class HeadOfficeServiceImplTest {
 				break; 
 			case 4:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
-				String guestHouse = scanner.nextLine();
+				String guestHouse = scanner.next();
 				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
 				System.out.println("몇 월입니까?");
 	    		int month03 = scanner.nextInt();
 	    		System.out.println("몇 일입니까?");
 	    		int day03 = scanner.nextInt();
 	    		try {
-	    			System.out.println(service.getSalesForDay(month03, day03,guestHouse));
+	    			System.out.println(service.getSalesForDay(month03, day03, guestHouse));
 	    		} catch(InvalidTransactionException e) {
 	    			System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
 	    		}
 				break;
 			case 5:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
-				String guestHouse05 = scanner.nextLine();
+				String guestHouse05 = scanner.next();
 				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
 				System.out.println("몇 월입니까?");
 	    		int month05 = scanner.nextInt();
@@ -336,7 +336,7 @@ public class HeadOfficeServiceImplTest {
 				break;
 			case 6:
 				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
-				String guestHouse02 = scanner.nextLine();
+				String guestHouse02 = scanner.next();
 				System.out.println("몇 월입니까?");
 	    		int month04 = scanner.nextInt();
 	    		try {	
@@ -368,6 +368,7 @@ public class HeadOfficeServiceImplTest {
 				} catch(InvalidTransactionException e) {
 					System.out.println("제대로 된 값을 입력하지 않으셨습니다. " + e);
 				}
+				break;
 			case 8:
 	
 				System.out.println("▶ 종료합니다.");
