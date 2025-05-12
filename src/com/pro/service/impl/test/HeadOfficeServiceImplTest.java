@@ -2,8 +2,6 @@ package com.pro.service.impl.test;
 
 import java.util.Scanner;
 
-import javax.lang.model.element.NestingKind;
-
 import com.pro.exception.InvalidTransactionException;
 import com.pro.service.impl.HeadOfficeServiceImpl;
 import com.pro.vo.*;
@@ -12,7 +10,6 @@ import com.pro.vo.child.Guest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -214,20 +211,8 @@ public class HeadOfficeServiceImplTest {
 	                    
 	                    break;
                     case 3:
-                    	List<User> users = service.searchAllUsers();
-                    	List<Guest> guests = new ArrayList<Guest>();
-                    	for (User u : users) {
-                    	    if (u instanceof Guest) {
-                    	    	guests.add((Guest) u);
-                    	    }
-                    	}
-                    	Collections.sort(guests,new HeadOfficeServiceImpl.GuestNameComparator());
-                    	
-                    	for (Guest g : guests) {
-                    	    System.out.printf("Name: %s, ID: %s%n", g.getName(), g.getId());
-                    	}
-                    	
-                    	break;
+
+                        break;
                     case 4:
                     	salesInformaion(service);
                         break;
@@ -370,7 +355,12 @@ public class HeadOfficeServiceImplTest {
 					for (double d : weekSales) {
 						weekSalesRanking.add(new WeekSalesRanking(idx++, d));
 					}
-					weekSalesRanking.sort(Comparator.comparingDouble(ws -> -ws.sales));
+					weekSalesRanking.sort(new Comparator<WeekSalesRanking>() {
+						@Override
+						public int compare(WeekSalesRanking o1, WeekSalesRanking o2) {
+					        return Double.compare(o2.sales, o1.sales);
+					    }
+					});
 					System.out.println();
 					for (WeekSalesRanking ws : weekSalesRanking) {
 						System.out.println(ws);
