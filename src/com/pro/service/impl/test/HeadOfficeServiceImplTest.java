@@ -146,18 +146,18 @@ public class HeadOfficeServiceImplTest {
                         System.out.println("⚠ 잘못된 입력입니다. 다시 선택하세요.");
                 }
         	}
-        	
         } else if(select == 2) {
         	while(tmp != 6) {
 		    	System.out.println("=====관리자용=======");
 		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 뒤로가기");System.out.print("선택 >> ");
-        		tmp = sc.nextInt();  // 사용자 입력 받기
+        		tmp = sc.nextInt(); 
+        		// 사용자 입력 받기
 
                 switch (tmp) {
                     case 1:
                     	System.out.println("▶ 회원 등록 기능 실행");
                         System.out.println("생성할 회원 ID : ");
-                        String id = sc.nextLine();
+                        String id = sc.next();
                         System.out.println("생성할 회원 이름 : ");
                         String name = sc.nextLine();
                         System.out.println("회원 핸드폰 번호 :");
