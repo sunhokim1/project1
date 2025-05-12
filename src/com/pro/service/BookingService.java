@@ -47,6 +47,7 @@ public interface BookingService {
      * @param guestId 조회할 사용자 식별자
      * @return 해당 사용자의 Booking 리스트
      */
+	Booking getBook(int isbn);
 	List<Booking> getBooks(String guestId);
 	/**
      * 현재 모든 객실이 예약으로 가득 찼는지 여부를 확인한다.

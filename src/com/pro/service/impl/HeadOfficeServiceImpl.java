@@ -410,6 +410,20 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	public List<Booking> getBooks() {
 		return bookings;
 	}
+	
+	public Booking getBook(int isbn) {
+		Booking findBook = null;
+		for(Booking b:bookings) {
+			if(b.getIsbn() == isbn) {
+				findBook = b;
+				break;
+			}
+		}
+		if(findBook == null) {
+			System.out.println("해당 예약을 찾을 수 없습니다.");
+		}
+		return findBook;
+	}
 
 	@Override
 	public List<Booking> getBooks(String guestId) {
