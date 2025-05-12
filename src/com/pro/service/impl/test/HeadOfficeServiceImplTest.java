@@ -146,39 +146,81 @@ public class HeadOfficeServiceImplTest {
         	}
         	
         } else if(select == 2) {
-        	while(tmp != 5) {
+        	while(tmp != 6) {
 		    	System.out.println("=====관리자용=======");
-		    	System.out.println("1. 전체 회원 정보 || 2. 전체 예약 정보 || 3. 특정 게스트 예약 정보 || 4. 특정 게스트하우스 예약 정보 || 5. 종료");
-        		System.out.print("선택 >> ");
+		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 뒤로가기");System.out.print("선택 >> ");
         		tmp = sc.nextInt();  // 사용자 입력 받기
 
                 switch (tmp) {
                     case 1:
-                        for(User u : service.searchAllUsers()) {
-                        	if (u instanceof Guest) {
-                        		System.out.println((Guest)u);
-                        	}
+                    	System.out.println("▶ 회원 등록 기능 실행");
+                        System.out.println("생성할 회원 ID : ");
+                        String id = sc.nextLine();
+                        System.out.println("생성할 회원 이름 : ");
+                        String name = sc.nextLine();
+                        System.out.println("회원 핸드폰 번호 :");
+                        String phone = sc.nextLine();
+                        System.out.println("회원의 부서 명 : ");
+                        String dept = sc.nextLine();
+                        System.out.println("회원의 월급은 : ");
+                        Double salary = sc.nextDouble();
+                        
+                        try {
+                        	service.addUser(new Employee(id, name, phone, dept,salary,0.0));
+                        } catch (Exception e) {
+                            System.out.println("직원을 등록 할 수 없습니다.\n " + e.getMessage());
                         }
                         break;
                     case 2:
-                    	for(Booking b : service.getBooks()) {
-                    		System.out.println(b);
-                    	}
-                        break;
+                    	System.out.println("▶ 게스트하우스 등록 기능 실행");
+                    	System.out.println("게스트하우스 이름은?");
+                    	String gName01 = sc.nextLine();
+                    	System.out.println("게스트하우스 장소는?");
+                    	String gAddr01 = sc.nextLine();
+                    	System.out.println("게스트하우스 주위 핫플레이스는?");
+                    	String hotPlace = sc.nextLine();
+                    	System.out.println("게스트하우스 가격은?");
+                    	Double price = sc.nextDouble();
+                    	
+                    	System.out.println("방 번호와 정원을 입력하세요. 입력을 멈추려면 '그만'을 입력하세요.");
+	                    int rSelect = -1;
+	                    HashMap<String,Integer> roomMap = new HashMap<>();
+                    	while(rSelect != 2) {
+                    		System.out.println("1. 추가 2. 그만");	
+                    		rSelect = sc.nextInt();
+		                    if(rSelect == 1) {
+		                    	System.out.println("방 번호와 정원을 입력하세요.");
+                    			String roomNumber = sc.next();
+		                    	int capacity = sc.nextInt();
+		                    	roomMap.put(roomNumber, capacity);
+		                    } else if(rSelect == 2) {
+		                    	System.out.println("종영합니다.");
+		                    }
+	                    }
+                    	//String name, String address, HashMap<String, Integer> rooms, String hotPlace, double price) {
+                    	try {
+	                    service.addGuestHouse(new GuestHouse(gName01,gAddr01,roomMap,hotPlace,price));
+                    	} catch(Exception e) {
+                            System.out.println("중복된 게스트하우스가 있습니다.\n " + e.getMessage());
+                        }
+	                    
+	                    break;
                     case 3:
 
                         break;
                     case 4:
-                        
+                    	salesInformaion(service);
                         break;
                     case 5:
+                        System.out.println("▶ 종료합니다.");
+                        break;
+                    case 6:
                         System.out.println("▶ 종료합니다.");
                         break;
                     default:
                         System.out.println("⚠ 잘못된 입력입니다. 다시 선택하세요.");
                 }
         	}
-        } else {
         	sc.close();
         	return;
         }
@@ -212,7 +254,64 @@ public class HeadOfficeServiceImplTest {
             System.out.println(b);
         }
     }
-    
+    private static void salesInformaion(HeadOfficeServiceImpl service) {
+    	Scanner scanner = new Scanner(System.in);
+    	int tmp02 = -1;
+    	while(tmp01 != 7) {
+    		System.out.println("메뉴를 선택 하세요");
+    		System.out.println("1. 전체 일간 매출 || 2. 전체 주간 매출 || 3. 전체 월간 매출 || 4. 한 게스트하우스에 대한 일간 매출 || 5. 한 게스트하우스에 대한 주간 매출 || 6. 한 게스트하우스에 대한 월간 매출 || 7. 종료");
+    		System.out.print("선택 >> ");
+    		tmp02 = scanner.nextInt();
+    		
+
+			switch (tmp02) {
+			case 1:
+				System.out.println("일간 매출을 받고 싶은 날짜를 입력하세요.");
+	    		System.out.println("몇 월입니까?");
+	    		int month = scanner.nextInt();
+	    		System.out.println("몇 일입니까?");
+	    		int day = scanner.nextInt();
+	    		System.out.println(service.getSalesForDay(month, day));
+				break;
+			case 2:
+				
+				break;
+			case 3:
+				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
+				System.out.println("몇 월입니까?");
+	    		int month02 = scanner.nextInt();
+	    		System.out.println(service.getSalesForMonth(month02));
+				break;
+			case 4:
+				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
+				String guestHouse = scanner.nextLine();
+				System.out.println("월간 매출을 받고 싶은 날짜를 입력하세요.");
+				System.out.println("몇 월입니까?");
+	    		int month03 = scanner.nextInt();
+	    		System.out.println("몇 일입니까?");
+	    		int day03 = scanner.nextInt();
+	    		System.out.println(service.getSalesForDay(month03, day03,guestHouse));
+				break;
+			case 5:
+				System.out.println("▶ 종료합니다.");
+				break;
+			case 6:
+				System.out.println("어떤 게스트하우스를 알고 싶으십니까? 게스트하우스 이름을 입력하세요.");
+				String guestHouse02 = scanner.nextLine();
+				System.out.println("몇 월입니까?");
+	    		int month04 = scanner.nextInt();
+	    		System.out.println(service.getSalesForMonth(month04, guestHouse02));
+				break;
+			case 7:
+	
+				System.out.println("▶ 종료합니다.");
+				break;
+			default:
+				System.out.println("⚠ 잘못된 입력입니다. 다시 선택하세요.");
+			}
+
+		}
+	}
     
     private static void initData(HeadOfficeServiceImpl service) {
     	
