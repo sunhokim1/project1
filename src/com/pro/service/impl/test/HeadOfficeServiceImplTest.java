@@ -1,109 +1,83 @@
 package com.pro.service.impl.test;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.pro.exception.DuplicateException;
-import com.pro.exception.RecordNotFoundException;
 import com.pro.service.impl.HeadOfficeServiceImpl;
-import com.pro.vo.GuestHouse;
-import com.pro.vo.User;
-import com.pro.vo.child.Employee;
+import com.pro.vo.*;
 import com.pro.vo.child.Guest;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+
 public class HeadOfficeServiceImplTest {
+    public static void main(String[] args) {
+        HeadOfficeServiceImpl service = HeadOfficeServiceImpl.getInstance();
 
-	public static void main(String[] args) {
-		HeadOfficeServiceImpl service;
-		service = HeadOfficeServiceImpl.getInstance();
-		System.out.println("======================1. AddUserTest======================");
-		try {
-			service.addUser(new Guest("g_101", "김철수", "010-1234-5678", "한국"));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		try {
-			service.addUser(new Guest("g_202", "안나", "010-3334-5655", "외국"));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		try {
-			service.addUser(new Guest("g_303", "화성인", "050-0054-5351", "우주"));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		try {
-			service.addUser(new Employee("e_101", "박관리", "070-1123-3345", "하우스매니저", 2000.0, 250.0));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		System.out.println();
-		System.out.println("======================2. SearchAllUsersTest===============");
-		for (User u : service.searchAllUsers()) {
-			System.out.println(u);
-		}
-		System.out.println();
-		System.out.println("======================3. DeleteUserTest======================");
-		try {
-			service.deleteUser("g_101");
-		}catch(RecordNotFoundException e) {
-			e.getMessage();
-		}
-		for (User u : service.searchAllUsers()) {
-			System.out.println(u);
-		}
-		System.out.println();
-		System.out.println("======================4. UpdateUserTest======================");
-		try {
-			service.updateUser(new Employee("e_101", "박관리", "010-3143-9950", "홍보부", 1000.0, 0.0));
-		}catch(RecordNotFoundException e) {
-			e.getMessage();
-		}
-		System.out.println();
-		System.out.println("======================5. searchUserTest======================");
-		System.out.println(service.searchUser("e_101"));
-		System.out.println();
-		System.out.println("======================6. AddGuestHouseTest===================");
-		try {
-			service.addGuestHouse(new GuestHouse("게하A", "게하A주소", new HashMap<>(Map.of("a1", 4, "a2", 4, "a3", 4, "a4", 4)), "드라마촬영지", 50));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		try {
-			service.addGuestHouse(new GuestHouse("게하B", "게하B주소", new HashMap<>(Map.of("a1", 4, "a2", 4, "a3", 4, "a4", 4)), "경복궁", 65));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		try {
-			service.addGuestHouse(new GuestHouse("게하C", "게하C주소", new HashMap<>(Map.of("b1", 6 , "b2", 6, "b3", 6, "b4", 6)), "에펠탑", 80));
-		}catch(DuplicateException e) {
-			e.getMessage();
-		}
-		System.out.println();
-		System.out.println("======================7. SearchAllGuestHouseTest=============");
-		for (GuestHouse g : service.searchAllGuestHouse()) {
-			System.out.println(g);
-		}
-		System.out.println();
-		System.out.println("======================8. DeleteGuestHouseTest================");
-		try {
-			service.deleteGuestHouse("게하B");
-		}catch(RecordNotFoundException e) {
-			e.getMessage();
-		}
-		for (GuestHouse g : service.searchAllGuestHouse()) {
-			System.out.println(g);
-		}
-		System.out.println();
-		System.out.println("======================9. UpdateGuestHouseTest================");
-		try {
-			service.updateGuestHouse(new GuestHouse("게하A", "게하A주소", new HashMap<>(Map.of("a1", 4, "a2", 4, "a3", 4, "a4", 4)), "UFO출현지역", 100));
-		}catch(RecordNotFoundException e) {
-			e.getMessage();
-		}
-		System.out.println();
-		System.out.println("=====================10. SearchGuestHouseTest================");
-		System.out.println(service.searchGuestHouse("게하A"));
-	}
+        // 사용자 및 게스트하우스 초기 등록
+        Guest guest1 = new Guest("guest001", "홍길동", "010-1111-2222", "한국");
+        Guest guest2 = new Guest("guest002", "김영희", "010-2222-3333", "한국");
+        GuestHouse house = new GuestHouse(
+                "서울하우스", "서울 강남구",
+                createRoomMap("101", 2, "102", 1),
+                "한강공원", 100000);
 
+        try {
+            service.addUser(guest1);
+            service.addUser(guest2);
+            service.addGuestHouse(house);
+        } catch (Exception e) {
+            System.out.println("초기 등록 중 예외 발생: " + e.getMessage());
+        }
+
+        // 예약 1: guest1 예약 (101)
+        Booking booking1 = new Booking(guest1, house, "101",
+                new BookingDate(LocalDate.of(2025, 5, 10)),
+                new BookingDate(LocalDate.of(2025, 5, 12)));
+        service.addBook(booking1);
+
+        // 예약 2: guest2 예약 (101) - 정원 2명이므로 가능
+        Booking booking2 = new Booking(guest2, house, "101",
+                new BookingDate(LocalDate.of(2025, 5, 10)),
+                new BookingDate(LocalDate.of(2025, 5, 12)));
+        service.addBook(booking2);
+
+        // 예약 3: guest1이 다시 101 시도 - 초과되므로 실패해야 함
+        Booking booking3 = new Booking(guest1, house, "101",
+                new BookingDate(LocalDate.of(2025, 5, 10)),
+                new BookingDate(LocalDate.of(2025, 5, 12)));
+        service.addBook(booking3);
+
+        // 예약 4: guest1이 102 시도 (1명 정원)
+        Booking booking4 = new Booking(guest1, house, "102",
+                new BookingDate(LocalDate.of(2025, 5, 13)),
+                new BookingDate(LocalDate.of(2025, 5, 14)));
+        service.addBook(booking4);
+
+        // 예약 5: guest2가 102 시도 (이미 찼으므로 실패)
+        Booking booking5 = new Booking(guest2, house, "102",
+                new BookingDate(LocalDate.of(2025, 5, 13)),
+                new BookingDate(LocalDate.of(2025, 5, 14)));
+        service.addBook(booking5);
+
+        // 예약 현황 출력
+        printBookings("[예약 현황 확인]", service);
+
+        // 특정 날짜 만실 여부 확인
+        LocalDate date1 = LocalDate.of(2025, 5, 10);
+        LocalDate date2 = LocalDate.of(2025, 5, 13);
+        System.out.println("[만실 확인] " + date1 + ": " + service.isroomFull(date1));
+        System.out.println("[만실 확인] " + date2 + ": " + service.isroomFull(date2));
+    }
+
+    private static HashMap<String, Integer> createRoomMap(String r1, int p1, String r2, int p2) {
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put(r1, p1);
+        map.put(r2, p2);
+        return map;
+    }
+
+    private static void printBookings(String title, HeadOfficeServiceImpl service) {
+        System.out.println("\n" + title);
+        for (Booking b : service.getBooks()) {
+            System.out.println(b);
+        }
+    }
 }

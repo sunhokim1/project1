@@ -247,35 +247,38 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 
 
-	private void initRoomStatus(String location) 
-	{
-		// location이 같고 시간 안에 있는 값.
-		GuestHouse g = new GuestHouse();
-		for(Booking b:bookings) {
-			// current_Date가 date2 라면 startdate.isBefore, endDAte.isAfter
-			if(b.getGuesthouse().getAddress().equals(location)) {
-				g = b.getGuesthouse();
-			}
-		}
-		for(String key:g.getRooms().keySet()) {
-			currentRoomStatus.put(key, 0);
-		}
+	private void initRoomStatus(String location) {
+	    GuestHouse g = null;
+	    for (GuestHouse gh : guestHouses) {
+	        if (gh.getAddress().equals(location)) {
+	            g = gh;
+	            break;
+	        }
+	    }
+
+	    if (g == null) return;
+
+	    currentRoomStatus = new HashMap<>(); // 필드 초기화
+
+	    for (String key : g.getRooms().keySet()) {
+	        currentRoomStatus.put(key, 0); // roomNumber별 초기값 0
+	    }
 	}
 	
-	private void checkRoomStatus(String location,LocalDate currentDate) {
-		for(Booking b:bookings) {
-			// current_Date가 date2 라면 startdate.isBefore, endDAte.isAfter
-			if(b.getGuesthouse().getAddress().equals(location)) {
-				if((b.getStartDate().getDate().isBefore(currentDate) || b.getStartDate().getDate().isEqual(currentDate))
-						&& ( b.getEndDate().getDate().isAfter(currentDate) || b.getStartDate().getDate().isEqual(currentDate))) 
-				{
-					String address = b.getGuesthouse().getAddress();
-					int count = currentRoomStatus.getOrDefault(address, 0);
-					currentRoomStatus.put(address, count + 1);
-				}
-			}
-		}
-	}//
+	// ✅ checkRoomStatus - roomNumber 기준으로 예약 수 누적
+	private void checkRoomStatus(String location, LocalDate currentDate) {
+	    for (Booking b : bookings) {
+	        if (b.getGuesthouse().getAddress().equals(location)) {
+	            if ((b.getStartDate().getDate().isBefore(currentDate) || b.getStartDate().getDate().isEqual(currentDate)) &&
+	                (b.getEndDate().getDate().isAfter(currentDate) || b.getEndDate().getDate().isEqual(currentDate))) {
+
+	                String roomNo = b.getRoomNumber();
+	                int count = currentRoomStatus.getOrDefault(roomNo, 0);
+	                currentRoomStatus.put(roomNo, count + 1);
+	            }
+	        }
+	    }
+	}
 	
 	private void clearRoomStatus() {
 		currentRoomStatus.clear();
@@ -283,27 +286,41 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	
 	@Override
 	public void addBook(Booking booking) {
-		// checkMemory(String location,LocalDate currentDate)
-		// 날짜 한개와 장소에 대해서 check하는 곳
-		Boolean flag = true;
-		LocalDate current = booking.getStartDate().getDate();
-		// booking 데이터에 대해서 장소에 대한 크기 0 인 room
-		while (!current.isAfter(booking.getEndDate().getDate())) {
-			initRoomStatus(booking.getGuesthouse().getAddress());
-			checkRoomStatus(booking.getGuesthouse().getAddress(),current); // current(날짜) 에 대해서 서울게스트하우스 현재 현황
-			if(currentRoomStatus.get(booking.getRoomNumber()) >= booking.getGuesthouse().getRooms().get(booking.getRoomNumber())) {
-				flag = false;
-				break;
-			}
-			current = current.plusDays(1);
-			clearRoomStatus();
-		}
-		if(flag == true) {
-			isbn++;
-			booking.setIsbn(isbn);
-			bookings.add(booking);
-		}
-		else return;	
+	    for (Booking b : bookings) {
+	        if (isEqualBooking(booking, b)) {
+	            // 중복 예약이면 추가 금지
+	            System.out.println("중복 예약입니다. 예약이 거부되었습니다.");
+	            return;
+	        }
+	    }
+
+	    boolean isAvailable = true;
+	    LocalDate current = booking.getStartDate().getDate();
+
+	    while (!current.isAfter(booking.getEndDate().getDate())) {
+	        initRoomStatus(booking.getGuesthouse().getAddress());
+	        checkRoomStatus(booking.getGuesthouse().getAddress(), current);
+
+	        int currentBooked = currentRoomStatus.getOrDefault(booking.getRoomNumber(), 0);
+	        int roomCapacity = booking.getGuesthouse().getRooms().getOrDefault(booking.getRoomNumber(), 0);
+
+	        if (currentBooked >= roomCapacity) {
+	            isAvailable = false;
+	            break;
+	        }
+
+	        current = current.plusDays(1);
+	        clearRoomStatus();
+	    }
+
+	    if (isAvailable) {
+	        isbn++;
+	        booking.setIsbn(isbn);
+	        bookings.add(booking);
+	        System.out.println("예약이 성공적으로 완료되었습니다.");
+	    } else {
+	        System.out.println("예약이 실패했습니다. 해당 날짜에 방이 가득 찼습니다.");
+	    }
 	}
 	// public HashMap<Integer,Book> searchBookByTitle(String title) {
 		
