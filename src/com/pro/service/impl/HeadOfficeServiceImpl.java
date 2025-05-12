@@ -315,6 +315,12 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	            return;
 	        }
 	    }
+	    for (Booking b : bookings) {
+	        if (isDuplicateBooking(b,booking)) {
+	            System.out.println("예약 시간이 겹칩니다. 다시 한번 확인해주세요");
+	            return;
+	        }
+	    }
 	    long daysBetween = ChronoUnit.DAYS.between(booking.getStartDate().getDate(), booking.getEndDate().getDate());
 	    if (daysBetween > MAX_NIGHT) {
 	    	System.out.println("최대 예약 일 수는 7일입니다.");
@@ -348,6 +354,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * @param booking 들어올 Booking
 	 * @return 있으면 true, 없으면 false
 	 */
+	private boolean isDuplicateBooking(Booking b, Booking booking) {
+	    return (b.getGuest().getId().equals(booking.getGuest().getId())) && (
+	           (b.getStartDate().getDate().isBefore(booking.getStartDate().getDate())) ||
+	           (b.getEndDate().getDate().isAfter(booking.getEndDate().getDate())));
+	}
 	private boolean isEqualBooking(Booking b,Booking booking) {
 		if((b.getGuest().getId().equals(booking.getGuest().getId()))
 						&& (b.getGuesthouse().getName().equals(booking.getGuesthouse().getName()))

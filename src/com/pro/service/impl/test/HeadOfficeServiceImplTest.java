@@ -185,14 +185,20 @@ public class HeadOfficeServiceImplTest {
                         break;
                     case 2:
                     	System.out.println("▶ 게스트하우스 등록 기능 실행");
+                    	sc.nextLine(); // 앞선 nextInt()나 next() 뒤 버퍼 정리
+
                     	System.out.println("게스트하우스 이름은?");
-                    	String gName01 = sc.next();
+                    	String gName01 = sc.nextLine();
+
                     	System.out.println("게스트하우스 장소는?");
-                    	String gAddr01 = sc.next();
+                    	String gAddr01 = sc.nextLine();
+
                     	System.out.println("게스트하우스 주위 핫플레이스는?");
-                    	String hotPlace = sc.next();
+                    	String hotPlace = sc.nextLine();
+
                     	System.out.println("게스트하우스 가격은?");
                     	Double price = sc.nextDouble();
+                    	sc.nextLine();
                     	
                     	System.out.println("방 번호와 정원을 입력하세요. 입력을 멈추려면 '그만'을 입력하세요.");
 	                    int rSelect = -1;
