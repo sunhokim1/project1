@@ -315,6 +315,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	            return;
 	        }
 	    }
+	    long daysBetween = ChronoUnit.DAYS.between(booking.getStartDate().getDate(), booking.getEndDate().getDate());
+	    if (daysBetween > MAX_NIGHT) {
+	    	System.out.println("최대 예약 일 수는 7일입니다.");
+	    	return ;
+	    }
 	    boolean isAvailable = true;
 	    LocalDate current = booking.getStartDate().getDate();
 	    while (!current.isAfter(booking.getEndDate().getDate())) {
