@@ -10,6 +10,7 @@ import com.pro.vo.child.Guest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -153,7 +154,7 @@ public class HeadOfficeServiceImplTest {
         } else if(select == 2) {
         	while(tmp != 6) {
 		    	System.out.println("=====관리자용=======");
-		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 뒤로가기");System.out.print("선택 >> ");
+		    	System.out.println("1. 직원 등록 | 2. 게스트 하우스 등록 | 3. 전체 게스트 정보(sort) | 4. 매출 정보 | 5. 인기 핫플레이스 | 6. 종료");System.out.print("선택 >> ");
         		tmp = sc.nextInt();  // 사용자 입력 받기
 
                 switch (tmp) {
@@ -199,10 +200,9 @@ public class HeadOfficeServiceImplTest {
 		                    	int capacity = sc.nextInt();
 		                    	roomMap.put(roomNumber, capacity);
 		                    } else if(rSelect == 2) {
-		                    	System.out.println("종영합니다.");
+		                    	System.out.println("종료합니다.");
 		                    }
 	                    }
-                    	//String name, String address, HashMap<String, Integer> rooms, String hotPlace, double price) {
                     	try {
 	                    service.addGuestHouse(new GuestHouse(gName01,gAddr01,roomMap,hotPlace,price));
                     	} catch(Exception e) {
@@ -211,13 +211,28 @@ public class HeadOfficeServiceImplTest {
 	                    
 	                    break;
                     case 3:
-
-                        break;
+                    	List<User> users = service.searchAllUsers();
+                    	List<Guest> guests = new ArrayList<Guest>();
+                    	for (User u : users) {
+                    	    if (u instanceof Guest) {
+                    	    	guests.add((Guest) u);
+                    	    }
+                    	}
+                    	Collections.sort(guests,new HeadOfficeServiceImpl.GuestNameComparator());
+                    	
+                    	for (Guest g : guests) {
+                    	    System.out.printf("Name: %s, ID: %s%n", g.getName(), g.getId());
+                    	}
+                    	
+                    	break;
                     case 4:
                     	salesInformaion(service);
                         break;
                     case 5:
-                        System.out.println("▶ 종료합니다.");
+                    	System.out.println("게스트 하우스 이름을 입력해주세요");
+                    	GuestHouse gh = service.searchGuestHouse(sc.next());
+                    	System.out.println(gh.getName() +" 근처 핫플레이스입니다.");
+                        System.out.println(gh.getHotPlace());
                         break;
                     case 6:
                         System.out.println("▶ 종료합니다.");
@@ -262,9 +277,9 @@ public class HeadOfficeServiceImplTest {
     private static void salesInformaion(HeadOfficeServiceImpl service)  {
     	Scanner scanner = new Scanner(System.in);
     	int tmp02 = -1;
-    	while(tmp02 != 7) {
+    	while(tmp02 != 8) {
     		System.out.println("메뉴를 선택 하세요");
-    		System.out.println("1. 전체 일간 매출 || 2. 전체 주간 매출 || 3. 전체 월간 매출 || 4. 한 게스트하우스에 대한 일간 매출 || 5. 한 게스트하우스에 대한 주간 매출 || 6. 한 게스트하우스에 대한 월간 매출 || 7. 주간 매출 랭킹 || 8. 종료");
+    		System.out.println("1. 전체 일간 매출 || 2. 전체 주간 매출 || 3. 전체 월간 매출 || 4. 한 게스트하우스에 대한 일간 매출 || 5. 한 게스트하우스에 대한 주간 매출 || 6. 한 게스트하우스에 대한 월간 매출 || 7. 주간 매출 랭킹 || 8. 뒤로가기");
     		System.out.print("선택 >> ");
     		tmp02 = scanner.nextInt();
     		
@@ -371,7 +386,7 @@ public class HeadOfficeServiceImplTest {
 				break;
 			case 8:
 	
-				System.out.println("▶ 종료합니다.");
+				System.out.println("▶ 관리자용 메뉴로 돌아갑니다.");
 				break;
 			default:
 				System.out.println("⚠ 잘못된 입력입니다. 다시 선택하세요.");
