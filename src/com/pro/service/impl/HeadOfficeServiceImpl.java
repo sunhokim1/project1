@@ -472,11 +472,6 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    return total;
 	}
 	@Override
-	public double getSalesForWeekly(int month, int weekly) throws InvalidTransactionException{
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	@Override
 	public double getSalesForMonth(int month) throws InvalidTransactionException{
 		 // 월 유효성 검사
 	    if (month < 1 || month > 12) {
@@ -656,6 +651,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    }
 
 	    return peakWeek;
+	}
+	@Override
+	public double getSalesForWeekly(int month, int weekly) throws InvalidTransactionException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 

@@ -20,7 +20,7 @@ public interface RevenueService {
      */
 	double getSalesForDay(int month, int day)throws InvalidTransactionException;
 	/**
-     * 지정된 달의 주별 전체 매출을 조회한다.
+     * 지정된 월의 주별 매출을 조회한다.
      *
      * @param month    조회할 
      * @param weekly 조회할 주(1~4)
@@ -44,7 +44,7 @@ public interface RevenueService {
      */
 	double getSalesForDay(int month, int day, String guestHouseName)throws InvalidTransactionException;
 	/**
-     * 지정된 달과 주별, 게스트하우스 이름을 기준으로 주별 매출을 조회한다.
+     * 지정된 달과 주별, 게스트하우스 이름을 기준으로 매출을 조회한다.
      *
      * @param month            조회할 달 
      * @param weekly           조회할 주 (1~4)
@@ -53,7 +53,7 @@ public interface RevenueService {
      */
 	double getSalesForQuarter(int month, int weekly, String guestHouseName)throws InvalidTransactionException;
 	/**
-     * 지정된 달과 게스트하우스 이름을 기준으로 월별 매출을 조회한다.
+     * 지정된 달과  게스트하우스 이름을 기준으로 매출을 조회한다.
      *
      * @param month            조회할 달 
      * @param guestHouseName   조회할 게스트하우스 이름
