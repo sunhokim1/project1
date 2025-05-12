@@ -90,7 +90,6 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			}
 		}
 		guestHouses.add(guestHouse);
-		System.out.println(guestHouse.getName() + "가 목록에 추가되었습니다.");
 	}
 	/**
 	 * User클래스를 users ArrayList에 추가한다.
