@@ -2,6 +2,8 @@ package com.pro.service.impl.test;
 
 import java.util.Scanner;
 
+import javax.lang.model.element.NestingKind;
+
 import com.pro.exception.InvalidTransactionException;
 import com.pro.service.impl.HeadOfficeServiceImpl;
 import com.pro.vo.*;
@@ -10,6 +12,7 @@ import com.pro.vo.child.Guest;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -211,8 +214,20 @@ public class HeadOfficeServiceImplTest {
 	                    
 	                    break;
                     case 3:
-
-                        break;
+                    	List<User> users = service.searchAllUsers();
+                    	List<Guest> guests = new ArrayList<Guest>();
+                    	for (User u : users) {
+                    	    if (u instanceof Guest) {
+                    	    	guests.add((Guest) u);
+                    	    }
+                    	}
+                    	Collections.sort(guests,new HeadOfficeServiceImpl.GuestNameComparator());
+                    	
+                    	for (Guest g : guests) {
+                    	    System.out.printf("Name: %s, ID: %s%n", g.getName(), g.getId());
+                    	}
+                    	
+                    	break;
                     case 4:
                     	salesInformaion(service);
                         break;
