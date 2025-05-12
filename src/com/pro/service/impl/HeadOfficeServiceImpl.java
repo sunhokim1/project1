@@ -50,9 +50,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 */
 	private List<User> users;
 	/**
-	 * 
+	 * String : 방이름 Integer : 하루에 묵을 수 있는 최대 인원 수
 	 */
 	private HashMap<String,Integer> currentRoomStatus;
+	
+	private static final int MAX_NIGHT = 7;
 	
 	private int isbn = 0;
 	/**
@@ -90,7 +92,6 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 			}
 		}
 		guestHouses.add(guestHouse);
-		System.out.println(guestHouse.getName() + "가 목록에 추가되었습니다.");
 	}
 	/**
 	 * User클래스를 users ArrayList에 추가한다.
