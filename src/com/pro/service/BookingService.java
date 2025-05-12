@@ -8,7 +8,7 @@ import com.pro.vo.Booking;
  * BookingService 인터페이스는 예약(Booking) 관리 기능을 제공한다.
  * 예약 생성, 조회, 수정, 취소 및 예약 목록 확인 기능을 정의한다.
  *
- * @author LEE TAE RAN
+ * @author LEE TAE RAN, KIM SUN HO, LEE YOON YEOL
  * @version 1.0.0
  * @since JDK17
  */

@@ -10,7 +10,7 @@ import com.pro.vo.GuestHouse;
  * HeadOfficeService 인터페이스는 BookingService와 RevenueService를 상속받아,
  * 본사 차원에서 게스트하우스 및 사용자 관리를 위한 기능을 제공한다.
  *
- * @author LEE TAE RAN
+ * @author LEE TAE RAN, KIM SUN HO, LEE YOON YEOL
  * @version 1.0.0
  * @since JDK17
  */

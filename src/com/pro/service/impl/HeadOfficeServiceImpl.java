@@ -25,7 +25,7 @@ import com.pro.vo.child.Guest;
  * HeadOfficeService로부터 implemets받아 만들어진다.
  * }
  * </pre>
- * @author Kim SunHo
+ * @author LEE TAE RAN, KIM SUN HO, LEE YOON YEOL
  * @version project version 0.0.1
  * @since JDK17
  * 
@@ -66,7 +66,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	}
 	/**
 	 * 싱글턴으로 관리하기 위해 getInstance로만 가져가 쓸수 있도록 하였다.
-	 * @return
+	 * @return Service
 	 */
 	public static HeadOfficeServiceImpl getInstance() {
 		return SERVICE;

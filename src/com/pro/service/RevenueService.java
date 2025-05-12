@@ -6,7 +6,7 @@ import com.pro.exception.InvalidTransactionException;
  * RevenueService 인터페이스는 연도, 월, 분기, 연도+숙소 기준의 매출 통계 조회 기능을 제공한다.
  * 매출 합계 및 성수기 분기 계산 메서드를 정의한다.
  *
- * @author LEE TAE RAN
+ * @author LEE TAE RAN, KIM SUN HO, LEE YOON YEOL
  * @version 1.0.0
  * @since JDK17
  */
