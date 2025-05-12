@@ -370,12 +370,20 @@ public class HeadOfficeServiceImplTest {
 					for (double d : weekSales) {
 						weekSalesRanking.add(new WeekSalesRanking(idx++, d));
 					}
-					weekSalesRanking.sort(new Comparator<WeekSalesRanking>() {
-						@Override
-						public int compare(WeekSalesRanking o1, WeekSalesRanking o2) {
-					        return Double.compare(o2.sales, o1.sales);
-					    }
-					});
+					int i = 0;
+					WeekSalesRanking temp = new WeekSalesRanking(0, 0.0);
+					while (i < weekSalesRanking.size()) {
+						int j = i+1;
+						while (j < weekSalesRanking.size()) {
+							if (weekSalesRanking.get(i).sales < weekSalesRanking.get(j).sales) {
+								temp = weekSalesRanking.get(i);
+								weekSalesRanking.set(i, weekSalesRanking.get(j));
+								weekSalesRanking.set(j, temp);
+							}
+							j++;
+						}
+						i++;
+					}
 					System.out.println();
 					for (WeekSalesRanking ws : weekSalesRanking) {
 						System.out.println(ws);

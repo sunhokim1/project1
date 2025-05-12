@@ -50,9 +50,11 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 */
 	private List<User> users;
 	/**
-	 * 
+	 * String : 방이름 Integer : 하루에 묵을 수 있는 최대 인원 수
 	 */
 	private HashMap<String,Integer> currentRoomStatus;
+	
+	private static final int MAX_NIGHT = 7;
 	
 	private int isbn = 0;
 	/**
