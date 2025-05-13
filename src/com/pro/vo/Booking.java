@@ -60,7 +60,7 @@ public class Booking implements Comparable<Booking>{
 	}
 	@Override
 	public String toString() {
-		return "Booking [guest=" + guest + ", guesthouse=" + guesthouse + ", roomNumber=" + roomNumber + ", startDate="
+		return "Booking [isbn= "+isbn+", guest=" + guest + ", guesthouse=" + guesthouse + ", roomNumber=" + roomNumber + ", startDate="
 				+ startDate + ", endDate=" + endDate + "]";
 	}
 	
