@@ -1022,9 +1022,6 @@ public class HeadOfficeServiceImplTest {
 				new BookingDate(LocalDate.of(2025, 3, 31)));
 		service.addBook(booking70);
 
-		Booking booking71 = new Booking((Guest) guest048, seoul, "104", new BookingDate(LocalDate.of(2025, 3, 26)),
-				new BookingDate(LocalDate.of(2025, 3, 29)));
-		service.addBook(booking71);
 
 		Booking booking72 = new Booking((Guest) guest049, seoul, "107", new BookingDate(LocalDate.of(2025, 3, 26)),
 				new BookingDate(LocalDate.of(2025, 3, 27)));

@@ -318,6 +318,7 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	    for (Booking b : bookings) {
 	        if (isDuplicateBooking(b,booking)) {
 	            System.out.println("예약 시간이 겹칩니다. 다시 한번 확인해주세요");
+	            System.out.println(booking);
 	            return;
 	        }
 	    }
@@ -355,9 +356,17 @@ public class HeadOfficeServiceImpl implements HeadOfficeService{
 	 * @return 있으면 true, 없으면 false
 	 */
 	private boolean isDuplicateBooking(Booking b, Booking booking) {
-	    return (b.getGuest().getId().equals(booking.getGuest().getId())) && (
-	           (b.getStartDate().getDate().isBefore(booking.getStartDate().getDate())) ||
-	           (b.getEndDate().getDate().isAfter(booking.getEndDate().getDate())));
+	    // 1. 같은 사람인지 확인
+	    if (!b.getGuest().getId().equals(booking.getGuest().getId())) return false;
+
+	    // 2. 날짜가 겹치는지 확인
+	    LocalDate start1 = b.getStartDate().getDate();
+	    LocalDate end1 = b.getEndDate().getDate();
+	    LocalDate start2 = booking.getStartDate().getDate();
+	    LocalDate end2 = booking.getEndDate().getDate();
+
+	    // 날짜가 겹치면 true
+	    return !(end1.isBefore(start2) || start1.isAfter(end2));
 	}
 	private boolean isEqualBooking(Booking b,Booking booking) {
 		if((b.getGuest().getId().equals(booking.getGuest().getId()))
